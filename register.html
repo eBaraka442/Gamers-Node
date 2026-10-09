@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Gamers-Node</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 16px;
+      background: #101014;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 28px;
+      background: #1b1b24;
+      border-radius: 16px;
+      border: 1px solid #393047;
+    }
+
+    h1 {
+      color: #bd83ff;
+      text-align: center;
+    }
+
+    p {
+      color: #d1d1dc;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #51465f;
+      border-radius: 8px;
+      background: #101014;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #a855f7;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    a {
+      color: #c99aff;
+    }
+
+    .back {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .notice {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🎮 Join Gamers-Node</h1>
+    <p>Connect. Compete. Grow.</p>
+    <p>Tell us a little about your gaming interests.</p>
+
+    <form id="registrationForm">
+      <label for="gamerName">Gamer name</label>
+      <input
+        id="gamerName"
+        name="gamerName"
+        type="text"
+        maxlength="30"
+        required
+        placeholder="Your gaming name"
+      >
+
+      <label for="email">Email (optional)</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="you@example.com"
+      >
+
+      <label for="game">Favourite game</label>
+      <select id="game" name="game" required>
+        <option value="">Choose a game</option>
+        <option>EA SPORTS FC</option>
+        <option>Call of Duty</option>
+        <option>Free Fire</option>
+        <option>Fortnite</option>
+        <option>Minecraft</option>
+        <option>Other</option>
+      </select>
+
+      <label for="platform">Gaming platform</label>
+      <select id="platform" name="platform" required>
+        <option value="">Choose a platform</option>
+        <option>Mobile</option>
+        <option>PC</option>
+        <option>PlayStation</option>
+        <option>Xbox</option>
+        <option>Other</option>
+      </select>
+
+      <label for="message">What would you like from the community? (optional)</label>
+      <textarea
+        id="message"
+        name="message"
+        rows="3"
+        maxlength="300"
+        placeholder="Gaming friends, tournaments, tips..."
+      ></textarea>
+
+      <button type="submit">SUBMIT REGISTRATION</button>
+    </form>
+
+    <p class="notice">
+      This is a demonstration form. Your details will not be
+      sent or saved yet. Do not enter passwords or sensitive information.
+    </p>
+
+    <a class="back" href="index.html">← Back to Gaming Hub</a>
+  </main>
+
+  <script>
+    document.getElementById("registrationForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+        alert("Thanks for your interest! Registration is not active yet. Please check back soon.");
+      });
+  </script>
+</body>
+</html>
