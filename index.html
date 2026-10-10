@@ -3,45 +3,257 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gaming Hub | Level Up</title>
+  <title>Gamers-Node | Level Up</title>
+  <meta name="description" content="Join Gamers-Node to connect with gamers, discover games and level up together.">
+
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #090711;
+      color: #fff;
       font-family: Arial, sans-serif;
-      background: #0b0b14;
-      color: white;
-      text-align: center;
+      line-height: 1.6;
     }
+
     header {
-      padding: 22px;
-      background: #171326;
-      color: #bba5ff;
-      font-size: 24px;
-      font-weight: bold;
+      padding: 20px 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      background: #100b1c;
+      border-bottom: 1px solid #39205c;
     }
-    main { padding: 75px 20px; }
-    h1 { font-size: 42px; }
-    p { color: #c6c4d2; line-height: 1.7; }
+
+    .logo {
+      color: #c084fc;
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 0 14px #9333ea;
+    }
+
+    nav a {
+      color: #eee5ff;
+      text-decoration: none;
+      margin-left: 18px;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: #d8b4fe;
+    }
+
+    .hero {
+      min-height: 520px;
+      padding: 90px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background:
+        radial-gradient(ellipse at 50% 20%, #39135c 0%, transparent 55%),
+        #090711;
+    }
+
+    .tag {
+      color: #d8b4fe;
+      border: 1px solid #8545bb;
+      border-radius: 30px;
+      padding: 7px 16px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 8vw, 70px);
+      line-height: 1.1;
+      margin-bottom: 22px;
+    }
+
+    h1 span {
+      color: #c084fc;
+      text-shadow: 0 0 25px #9333ea;
+    }
+
+    .hero p {
+      max-width: 580px;
+      color: #c9c4d5;
+      margin-bottom: 30px;
+    }
+
     .btn {
       display: inline-block;
-      padding: 14px 24px;
-      background: #8b5cf6;
+      padding: 14px 25px;
+      background: #9333ea;
       color: white;
       text-decoration: none;
-      border-radius: 8px;
       font-weight: bold;
+      border-radius: 9px;
+      box-shadow: 0 0 20px #7e22ce66;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 28px #a855f7;
+    }
+
+    .section {
+      padding: 65px 7%;
+      text-align: center;
+    }
+
+    .section h2 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .section-intro {
+      color: #aaa3bd;
+      margin-bottom: 32px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 20px;
+      max-width: 1050px;
+      margin: auto;
+    }
+
+    .card {
+      padding: 28px 20px;
+      background: #151020;
+      border: 1px solid #39234e;
+      border-radius: 14px;
+      transition: transform .2s, border-color .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #b46cff;
+    }
+
+    .card .emoji {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      color: #d8b4fe;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: #bcb5cb;
+      font-size: 14px;
+    }
+
+    .join {
+      background: linear-gradient(180deg, #090711, #1a0d2b);
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: #9990aa;
+      font-size: 13px;
+      border-top: 1px solid #30203f;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+      }
+
+      nav a {
+        margin: 0 8px;
+      }
+
+      .hero {
+        min-height: 460px;
+        padding: 65px 20px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <header>🎮 GAMING HUB</header>
+  <header>
+    <div class="logo">🎮 GAMERS-NODE</div>
+
+    <nav>
+      <a href="#games">Games</a>
+      <a href="#community">Community</a>
+      <a href="register.html">Join</a>
+    </nav>
+  </header>
+
   <main>
-    <h1>READY TO LEVEL UP?</h1>
-    <p>Meet gamers. Showcase your talent.<br>
-       Turn your passion into new opportunities.</p>
-    <a class="btn" href="register.html">JOIN THE COMMUNITY</a>
-    <h2 id="community">YOUR NEXT LEVEL STARTS HERE</h2>
-    <p>Connect. Compete. Grow.</p>
+    <section class="hero">
+      <div class="tag">YOUR GAME. YOUR COMMUNITY.</div>
+
+      <h1>READY TO <span>LEVEL UP?</span></h1>
+
+      <p>
+        Meet fellow gamers, discover your next challenge,
+        showcase your talent, and grow with the Gamers-Node community.
+      </p>
+
+      <a class="btn" href="register.html">JOIN THE COMMUNITY ↗️</a>
+    </section>
+
+    <section class="section" id="games">
+      <h2>ENTER YOUR GAMING WORLD</h2>
+      <p class="section-intro">
+        Whatever you play, there's a place for you here.
+      </p>
+
+      <div class="cards">
+        <article class="card">
+          <div class="emoji">📱</div>
+          <h3>Mobile Gaming</h3>
+          <p>Connect with mobile gamers and share your favourite games.</p>
+        </article>
+
+        <article class="card">
+          <div class="emoji">🖥️</div>
+          <h3>PC Gaming</h3>
+          <p>Explore PC gaming, exchange tips, and find gaming friends.</p>
+        </article>
+
+        <article class="card">
+          <div class="emoji">🏆</div>
+          <h3>Competitive Play</h3>
+          <p>Celebrate your skills and discover future tournament opportunities.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section join" id="community">
+      <h2>YOUR NEXT LEVEL STARTS HERE</h2>
+      <p class="section-intro">
+        Connect. Compete. Grow. Be part of the community.
+      </p>
+
+      <a class="btn" href="register.html">GET STARTED NOW</a>
+    </section>
   </main>
+
+  <footer>
+    © 2026 Gamers-Node. Built for gamers, powered by community. 💜
+  </footer>
 </body>
 </html>
