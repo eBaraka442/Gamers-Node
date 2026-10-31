@@ -187,6 +187,148 @@
         padding: 65px 20px;
       }
     }
+ /* GAMERS-NODE ANNOUNCEMENT SYSTEM */
+
+    .announcement-section {
+      padding: 45px 7%;
+      background: #0d0916;
+      text-align: center;
+    }
+
+    .announcement-section h2 {
+      color: #c084fc;
+      font-size: 28px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 15px #9333ea;
+    }
+
+    .announcement-section .section-intro {
+      margin-bottom: 25px;
+    }
+
+    .announcement-card {
+      max-width: 900px;
+      margin: auto;
+      padding: 25px;
+      text-align: left;
+
+      background: #151020;
+      border: 1px solid #8545bb;
+      border-radius: 15px;
+
+      box-shadow: 0 0 20px #9333ea33;
+    }
+
+    .announcement-card h3 {
+      color: #d8b4fe;
+      margin-bottom: 12px;
+    }
+
+    .announcement-card p {
+      color: #c9c4d5;
+      margin-bottom: 15px;
+    }
+
+    .announcement-label {
+      display: inline-block;
+      padding: 5px 12px;
+      margin-bottom: 15px;
+
+      background: #351653;
+      border: 1px solid #8545bb;
+      border-radius: 20px;
+
+      color: #e9d5ff;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    /* TEMPORARY POP-UP */
+
+    .gn-announcement-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+
+      width: calc(100% - 40px);
+      max-width: 380px;
+
+      padding: 22px;
+
+      background: #171026;
+      border: 1px solid #a855f7;
+      border-radius: 15px;
+
+      box-shadow: 0 0 30px #9333ea66;
+
+      z-index: 9999;
+
+      animation: gn-popup-in 0.4s ease;
+    }
+
+    .gn-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      margin-bottom: 15px;
+    }
+
+    .gn-popup-header strong {
+      color: #c084fc;
+      font-size: 14px;
+    }
+
+    .gn-popup-close {
+      background: transparent;
+      border: none;
+
+      color: #ffffff;
+      font-size: 27px;
+
+      cursor: pointer;
+    }
+
+    .gn-announcement-popup h3 {
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .gn-announcement-popup p {
+      color: #c9c4d5;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .gn-popup-hidden {
+      display: none;
+    }
+
+    @keyframes gn-popup-in {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .announcement-section {
+        padding: 40px 20px;
+      }
+
+      .gn-announcement-popup {
+        top: 12px;
+        right: 12px;
+        width: calc(100% - 24px);
+      }
+    }
   </style>
 <link rel="stylesheet" href="bot.css">    
 </head>
