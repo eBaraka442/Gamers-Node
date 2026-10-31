@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>You're In! | Gamers-Node</title>
 
   <style>
@@ -18,8 +19,15 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+
       background:
-        radial-gradient(ellipse at top, #32105e 0%, #100819 45%, #050507 100%);
+        radial-gradient(
+          ellipse at top,
+          #32105e 0%,
+          #100819 45%,
+          #050507 100%
+        );
+
       color: #ffffff;
       font-family: Arial, sans-serif;
       text-align: center;
@@ -29,10 +37,14 @@
       width: 100%;
       max-width: 650px;
       padding: 48px 28px;
+
       border: 1px solid #9b4dff;
       border-radius: 22px;
+
       background: rgba(17, 10, 29, 0.92);
-      box-shadow: 0 0 30px rgba(153, 50, 255, 0.25);
+
+      box-shadow:
+        0 0 30px rgba(153, 50, 255, 0.25);
     }
 
     .logo {
@@ -46,14 +58,18 @@
     .icon {
       font-size: 62px;
       margin-bottom: 20px;
+
       filter: drop-shadow(0 0 12px #a855f7);
     }
 
     h1 {
       font-size: clamp(30px, 7vw, 48px);
       margin-bottom: 18px;
+
       color: #ffffff;
-      text-shadow: 0 0 18px rgba(168, 85, 247, 0.7);
+
+      text-shadow:
+        0 0 18px rgba(168, 85, 247, 0.7);
     }
 
     h1 span {
@@ -70,53 +86,204 @@
     .button {
       display: inline-block;
       padding: 15px 25px;
+
       border-radius: 9px;
+
       background: #9333ea;
       color: #ffffff;
+
       text-decoration: none;
       font-weight: bold;
       letter-spacing: 1px;
-      box-shadow: 0 0 18px rgba(147, 51, 234, 0.4);
+
+      box-shadow:
+        0 0 18px rgba(147, 51, 234, 0.4);
+
       transition: 0.2s ease;
     }
 
     .button:hover {
       background: #a855f7;
       transform: translateY(-2px);
-      box-shadow: 0 0 28px rgba(168, 85, 247, 0.7);
+
+      box-shadow:
+        0 0 28px rgba(168, 85, 247, 0.7);
+    }
+
+    /* WEEKLY LEAGUE SECTION */
+
+    .league {
+      margin-top: 35px;
+      padding: 25px 18px;
+
+      border: 1px solid #6b21a8;
+      border-radius: 15px;
+
+      background: rgba(91, 33, 182, 0.12);
+
+      box-shadow:
+        0 0 20px rgba(147, 51, 234, 0.12);
+    }
+
+    .league h2 {
+      color: #c084fc;
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    .league p {
+      margin-bottom: 18px;
+    }
+
+    .league-info {
+      text-align: left;
+      padding: 15px;
+
+      border-radius: 10px;
+
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .league-info p {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .league-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .league-button {
+      display: inline-block;
+      margin-top: 22px;
+
+      padding: 13px 20px;
+
+      border: 1px solid #a855f7;
+      border-radius: 8px;
+
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+
+      transition: 0.2s ease;
+    }
+
+    .league-button:hover {
+      background: #9333ea;
+      box-shadow:
+        0 0 20px rgba(168, 85, 247, 0.5);
     }
 
     .small {
       font-size: 13px;
       color: #8f849e;
+
       margin-top: 30px;
       margin-bottom: 0;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 35px 18px;
+      }
+
+      .league {
+        padding: 20px 14px;
+      }
     }
   </style>
 </head>
 
 <body>
+
   <main class="card">
-    <div class="logo">🎮 GAMERS-NODE</div>
 
-    <div class="icon">✓</div>
+    <div class="logo">
+      🎮 GAMERS-NODE
+    </div>
 
-    <h1>YOU'RE IN, <span>GAMER!</span></h1>
+    <div class="icon">
+      ✓
+    </div>
+
+    <h1>
+      YOU'RE IN, <span>GAMER!</span>
+    </h1>
 
     <p>
-      Welcome to Gamers-Node! Your registration has been
-      submitted. Thanks for joining our gaming community.
-      Get ready to connect, explore games, and level up
-      together!
+      Welcome to Gamers-Node!
+
+      Your registration has been submitted.
+      Thanks for joining our gaming community.
+
+      Get ready to connect, explore games,
+      and level up together!
     </p>
 
-    <a class="button" href="./index.html">
+    <!-- WEEKLY LEAGUE SECTION -->
+
+    <section class="league">
+
+      <h2>🏆 WEEKLY LEAGUE</h2>
+
+      <p>
+        Ready to compete with fellow gamers?
+
+        Discover our weekly league,
+        connect with other players,
+        and enjoy the gaming experience.
+      </p>
+
+      <div class="league-info">
+
+        <p>
+          🎮 <strong>Community:</strong>
+          Gamers-Node
+        </p>
+
+        <p>
+          📅 <strong>League Day:</strong>
+          Saturday
+        </p>
+
+        <p>
+          👥 <strong>Players:</strong>
+          8 gamers per league
+        </p>
+
+        <p>
+          📝 <strong>Registration:</strong>
+          Contact the league administrator
+          for participation details.
+        </p>
+
+      </div>
+
+      <a
+        class="league-button"
+        href="./index.html"
+      >
+        EXPLORE GAMERS-NODE
+      </a>
+
+    </section>
+
+    <br>
+
+    <a
+      class="button"
+      href="./index.html"
+    >
       BACK TO HOMEPAGE
     </a>
 
     <p class="small">
-      GAME TOGETHER. LEVEL UP TOGETHER.
+      GAME TOGETHER.
+      LEVEL UP TOGETHER.
     </p>
+
   </main>
+
 </body>
 </html>
