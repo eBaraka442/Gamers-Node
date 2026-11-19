@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,708 +8,718 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
     background: #090711;
-    color: #eee;
+    color: #ffffff;
     font-family: Arial, sans-serif;
-}
-
-header {
-    background: #100b1c;
     padding: 20px;
-    border-bottom: 1px solid #39205c;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
 }
-
-header h1 { color: #c084fc; }
-header span { color: #aaa; font-size: 13px; }
 
 .container {
     max-width: 1100px;
     margin: auto;
-    padding: 25px 16px;
 }
 
-.card {
-    background: #171326;
+h1, h2 {
+    color: #c084fc;
+    margin-bottom: 18px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+section {
+    background: #151020;
     border: 1px solid #39205c;
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 22px;
+    padding: 22px;
+    margin-bottom: 25px;
 }
 
-h2 { color: #c084fc; margin-bottom: 18px; }
-
-input, select {
+input, select, button {
     width: 100%;
     padding: 12px;
-    margin: 8px 0 14px;
+    margin: 8px 0;
     border-radius: 7px;
-    border: 1px solid #493263;
-    background: #0b0913;
+    border: 1px solid #49316b;
+    background: #0d0917;
     color: white;
+    font-size: 15px;
 }
 
 button {
-    padding: 12px 18px;
-    border: none;
-    border-radius: 7px;
     background: #8b5cf6;
-    color: white;
+    border: none;
     font-weight: bold;
     cursor: pointer;
 }
 
-button:hover { background: #a879ff; }
-button:disabled { opacity: 0.6; cursor: wait; }
-.logout { background: #382044; }
+button:hover {
+    background: #a879ff;
+}
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 18px;
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    display: none;
+}
+
+.success {
+    background: #123b25;
+    color: #86efac;
+}
+
+.error {
+    background: #451a1a;
+    color: #fca5a5;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 650px;
+    margin-top: 15px;
+    min-width: 500px;
 }
 
 th, td {
+    border: 1px solid #39205c;
     padding: 12px;
-    border-bottom: 1px solid #39205c;
     text-align: left;
 }
 
-th { color: #c084fc; }
-.table-wrap { overflow-x: auto; }
-
-#dashboard { display: none; }
-
-#message, #dashboardMessage {
+th {
+    background: #241438;
     color: #c084fc;
-    line-height: 1.5;
-    margin: 12px 0;
-    overflow-wrap: anywhere;
 }
 
-small { color: #aaa; }
+.table-wrapper {
+    overflow-x: auto;
+}
+
+#dashboard {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    section {
+        padding: 15px;
+    }
+}
 </style>
 </head>
 
 <body>
-
-<header>
-    <div>
-        <h1>GAMERS-NODE</h1>
-        <span>SUPER ADMIN CONTROL CENTER</span>
-    </div>
-
-    <button id="logoutBtn" class="logout" style="display:none">
-        Logout
-    </button>
-</header>
-
 <div class="container">
 
-    <section id="loginSection" class="card">
-        <h2>Administrator Login</h2>
-        <p>Sign in using your Gamers-Node administrator account.</p>
+<h1>Gamers-Node Admin Dashboard</h1>
 
-        <form id="loginForm">
-            <input type="email" id="email"
-                placeholder="Admin email address" required>
+<section id="loginSection">
+    <h2>Admin Login</h2>
 
-            <input type="password" id="password"
-                placeholder="Password" required>
+    <form id="loginForm">
+        <input
+            type="email"
+            id="email"
+            placeholder="Admin email"
+            required
+        >
 
-            <button type="submit" id="loginButton">
-                Login to Dashboard
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+        >
+
+        <button type="submit" id="loginButton">
+            Login
+        </button>
+    </form>
+
+    <div id="message" class="message"></div>
+</section>
+
+<div id="dashboard">
+
+    <section>
+        <h2>Welcome, Admin</h2>
+        <button type="button" id="logoutButton">
+            Logout
+        </button>
+        <div id="dashboardMessage" class="message"></div>
+    </section>
+
+    <section>
+        <h2>Register Player</h2>
+
+        <form id="playerForm">
+            <input
+                type="text"
+                id="playerName"
+                placeholder="Player name"
+                required
+            >
+
+            <button type="submit">
+                Register Player
             </button>
         </form>
-
-        <p id="message"></p>
     </section>
 
-    <section id="dashboard">
+    <section>
+        <h2>Create Tournament</h2>
 
-        <div class="card">
-            <h2>Welcome, Administrator!</h2>
-            <p>Manage your players, tournaments and match results.</p>
-            <p id="adminEmail" style="color:#c084fc;margin-top:10px"></p>
-        </div>
+        <form id="tournamentForm">
+            <input
+                type="text"
+                id="tournamentName"
+                placeholder="Tournament name"
+                required
+            >
 
-        <div class="grid">
+            <input
+                type="text"
+                id="tournamentSeason"
+                placeholder="Season (e.g. Season 1)"
+                required
+            >
 
-            <div class="card">
-                <h2>Register Player</h2>
-                <form id="playerForm">
-                    <input id="playerName"
-                        placeholder="Player display name" required>
-                    <button type="submit">Add Player</button>
-                </form>
-            </div>
+            <select id="tournamentStatus" required>
+                <option value="upcoming">Upcoming</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+            </select>
 
-            <div class="card">
-                <h2>Create Tournament</h2>
-                <form id="tournamentForm">
-                    <input id="tournamentName"
-                        placeholder="Tournament name" required>
+            <input
+                type="date"
+                id="tournamentDate"
+            >
 
-                    <input id="season"
-                        placeholder="Season (optional)">
-
-                    <label>Start date</label>
-                    <input type="date" id="startDate">
-
-                    <label>Tournament status</label>
-                    <select id="tournamentStatus">
-                        <option value="upcoming">Upcoming</option>
-                        <option value="active">Active</option>
-                        <option value="completed">Completed</option>
-                    </select>
-
-                    <button type="submit">Create Tournament</button>
-                </form>
-            </div>
-
-        </div>
-
-        <div class="card">
-            <h2>Enter Match Results</h2>
-
-            <form id="matchForm">
-
-                <label>Tournament</label>
-                <select id="matchTournament" required>
-                    <option value="">Select tournament</option>
-                </select>
-
-                <label>Home player</label>
-                <select id="homePlayer" required>
-                    <option value="">Select home player</option>
-                </select>
-
-                <label>Away player</label>
-                <select id="awayPlayer" required>
-                    <option value="">Select away player</option>
-                </select>
-
-                <div class="grid">
-                    <div>
-                        <label>Home score</label>
-                        <input type="number" id="homeScore"
-                            min="0" step="1" required>
-                    </div>
-
-                    <div>
-                        <label>Away score</label>
-                        <input type="number" id="awayScore"
-                            min="0" step="1" required>
-                    </div>
-                </div>
-
-                <button type="submit">Save Match Result</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>Registered Players</h2>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>Player</th><th>Status</th></tr>
-                    </thead>
-                    <tbody id="playersTable"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Tournaments</h2>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Season</th>
-                            <th>Status</th>
-                            <th>Start date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tournamentsTable"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>League Standings</h2>
-            <small>Automatically calculated from recorded match results.</small>
-
-            <div class="table-wrap" style="margin-top:15px">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Player</th>
-                            <th>MP</th>
-                            <th>W</th>
-                            <th>D</th>
-                            <th>L</th>
-                            <th>GF</th>
-                            <th>GA</th>
-                            <th>GD</th>
-                            <th>PTS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="standingsTable"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <p id="dashboardMessage"></p>
-
+            <button type="submit">
+                Create Tournament
+            </button>
+        </form>
     </section>
+
+    <section>
+        <h2>Enter Match Results</h2>
+
+        <form id="matchForm">
+
+            <select id="matchTournament" required>
+                <option value="">Select Tournament</option>
+            </select>
+
+            <select id="homePlayer" required>
+                <option value="">Select Home Player</option>
+            </select>
+
+            <select id="awayPlayer" required>
+                <option value="">Select Away Player</option>
+            </select>
+
+            <input
+                type="number"
+                id="homeScore"
+                placeholder="Home score"
+                min="0"
+                required
+            >
+
+            <input
+                type="number"
+                id="awayScore"
+                placeholder="Away score"
+                min="0"
+                required
+            >
+
+            <button type="submit">
+                Save Match Result
+            </button>
+
+        </form>
+    </section>
+
+    <section>
+        <h2>Registered Players</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Status</th>
+                        <th>Registered</th>
+                    </tr>
+                </thead>
+                <tbody id="playersTable">
+                    <tr>
+                        <td colspan="3">Loading players...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h2>Tournaments</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tournament</th>
+                        <th>Season</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                    </tr>
+                </thead>
+                <tbody id="tournamentsTable">
+                    <tr>
+                        <td colspan="4">Loading tournaments...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h2>League Standings</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Played</th>
+                        <th>Won</th>
+                        <th>Drawn</th>
+                        <th>Lost</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody id="standingsTable">
+                    <tr>
+                        <td colspan="6">Loading standings...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </div>
-
 <script>
-// =====================================
-// SUPABASE CONFIGURATION
-// =====================================
+const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
-const SUPABASE_URL =
-"https://zptxyfqqgxnxktquvkrk.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
-
-// =====================================
-// PAGE ELEMENTS
-// =====================================
+let db = null;
+let adminCheckPromise = null;
 
 const loginSection = document.getElementById("loginSection");
 const dashboard = document.getElementById("dashboard");
+const loginForm = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const logoutButton = document.getElementById("logoutButton");
 const message = document.getElementById("message");
 const dashboardMessage = document.getElementById("dashboardMessage");
-const logoutBtn = document.getElementById("logoutBtn");
-const loginButton = document.getElementById("loginButton");
-const loginForm = document.getElementById("loginForm");
 
-function showMessage(text) {
-    message.textContent = text;
+function showMessage(element, text, type) {
+    element.textContent = text;
+    element.className = "message " + type;
+    element.style.display = "block";
 }
 
-function showDashboardMessage(text) {
-    dashboardMessage.textContent = text;
+function hideMessage(element) {
+    element.textContent = "";
+    element.style.display = "none";
 }
 
 function showLogin() {
     loginSection.style.display = "block";
     dashboard.style.display = "none";
-    logoutBtn.style.display = "none";
 }
 
-// =====================================
-// LOGIN HANDLER
-// REGISTER THIS BEFORE SUPABASE CHECK
-// =====================================
+function showDashboard() {
+    loginSection.style.display = "none";
+    dashboard.style.display = "block";
+}
 
-loginForm.addEventListener("submit", async function(e) {
+function showDashboardMessage(text, type = "error") {
+    showMessage(dashboardMessage, text, type);
+}
 
-    e.preventDefault();
-
-    if (!db) {
-        showMessage(
-            "Supabase library is unavailable. Reload the page and check your internet connection."
-        );
-        return;
+function initializeSupabase() {
+    if (!window.supabase) {
+        throw new Error("Supabase library failed to load.");
     }
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    db = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
+    );
+}
 
-    loginButton.disabled = true;
-    loginButton.textContent = "Signing in...";
-    showMessage("Connecting to Gamers-Node...");
+async function checkAdmin() {
+    if (adminCheckPromise) {
+        return adminCheckPromise;
+    }
+
+    adminCheckPromise = (async () => {
+        const { data: { user }, error: userError } =
+            await db.auth.getUser();
+
+        if (userError || !user) {
+            throw new Error("Please log in again.");
+        }
+
+        const { data, error } = await db
+            .from("admin_users")
+            .select("role")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        if (error) {
+            throw new Error(
+                "Could not verify admin access: " + error.message
+            );
+        }
+
+        if (!data || !["admin", "super_admin"].includes(data.role)) {
+            throw new Error("This account does not have admin access.");
+        }
+
+        return user;
+    })();
 
     try {
+        return await adminCheckPromise;
+    } finally {
+        adminCheckPromise = null;
+    }
+}
 
-        const { data, error } = await db.auth.signInWithPassword({
-            email: email,
-            password: password
+async function handleLogin(email, password) {
+    hideMessage(message);
+    loginButton.disabled = true;
+    loginButton.textContent = "Logging in...";
+
+    try {
+        const { error } = await db.auth.signInWithPassword({
+            email,
+            password
         });
 
         if (error) {
-            showMessage("LOGIN ERROR: " + error.message);
-            return;
+            throw error;
         }
-
-        if (!data.user) {
-            showMessage("Login did not return a user account.");
-            return;
-        }
-
-        showMessage("Login successful. Checking administrator access...");
 
         await checkAdmin();
 
-    } catch (error) {
-
-        showMessage("LOGIN ERROR: " + error.message);
-
-    } finally {
-
-        loginButton.disabled = false;
-        loginButton.textContent = "Login to Dashboard";
-
-    }
-});
-
-// =====================================
-// INITIALIZE SUPABASE
-// =====================================
-
-let db = null;
-
-if (window.supabase) {
-
-    try {
-
-        db = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY,
-            {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
-                }
-            }
+        showDashboard();
+        showMessage(
+            dashboardMessage,
+            "Login successful. Welcome to Gamers-Node!",
+            "success"
         );
-
-    } catch (error) {
-
-        showMessage("SUPABASE INITIALIZATION ERROR: " + error.message);
-
-    }
-
-} else {
-
-    showMessage(
-        "Supabase library failed to load. Check your internet connection and reload."
-    );
-
-}
-
-// =====================================
-// ADMIN AUTHENTICATION
-// =====================================
-
-async function checkAdmin() {
-
-    try {
-
-        const { data, error } = await db.auth.getUser();
-
-        if (error) {
-            showLogin();
-            showMessage("SESSION ERROR: " + error.message);
-            return;
-        }
-
-        const user = data.user;
-
-        if (!user) {
-            showLogin();
-            return;
-        }
-
-        const { data: adminResult, error: adminError } =
-            await db.rpc("is_admin");
-
-        if (adminError) {
-            showLogin();
-            showMessage("ADMIN CHECK ERROR: " + adminError.message);
-            return;
-        }
-
-        if (adminResult !== true) {
-            showLogin();
-            showMessage(
-                "Your account does not have administrator access."
-            );
-            return;
-        }
-
-        loginSection.style.display = "none";
-        dashboard.style.display = "block";
-        logoutBtn.style.display = "block";
-
-        document.getElementById("adminEmail").textContent =
-            "Signed in as: " + user.email;
-
-        showMessage("");
 
         await loadDashboard();
 
     } catch (error) {
-
+        await db.auth.signOut();
         showLogin();
-        showMessage("ADMIN CHECK ERROR: " + error.message);
 
+        showMessage(
+            message,
+            error.message || "Login failed. Please try again.",
+            "error"
+        );
+
+    } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
     }
 }
 
-// =====================================
-// LOGOUT
-// =====================================
+loginForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-logoutBtn.addEventListener("click", async function() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-    if (!db) return;
+    await handleLogin(email, password);
+});
 
+logoutButton.addEventListener("click", async function() {
     try {
-
-        const { error } = await db.auth.signOut();
-
-        if (error) {
-            showDashboardMessage(error.message);
-            return;
-        }
-
+        await db.auth.signOut();
         showLogin();
-        showMessage("You have logged out.");
-
+        hideMessage(message);
     } catch (error) {
-
-        showDashboardMessage("LOGOUT ERROR: " + error.message);
-
+        showDashboardMessage(
+            "Logout failed: " + error.message
+        );
     }
 });
 
-// =====================================
-// AUTHENTICATION STATE
-// =====================================
-
-if (db) {
-
-    db.auth.onAuthStateChange((event) => {
-
-        if (event === "SIGNED_OUT") {
-            showLogin();
-        }
-
-    });
-
-}
-
-// =====================================
-// LOAD DASHBOARD
-// =====================================
-
-async function loadDashboard() {
-
-    showDashboardMessage("Loading dashboard...");
-
-    await Promise.all([
-        loadPlayers(),
-        loadTournaments(),
-        loadStandings()
-    ]);
-
-    showDashboardMessage("Dashboard data loaded.");
-
-}
-
-// =====================================
-// REGISTER PLAYER
-// =====================================
-
-document.getElementById("playerForm")
-.addEventListener("submit", async function(e) {
-
-    e.preventDefault();
-
-    const name =
-        document.getElementById("playerName").value.trim();
-
-    if (!name) return;
-
+async function restoreSession() {
     try {
-
-        const { error } = await db
-            .from("players")
-            .insert({ display_name: name });
+        const { data, error } = await db.auth.getSession();
 
         if (error) {
-            showDashboardMessage(error.message);
+            throw error;
+        }
+
+        if (!data.session) {
+            showLogin();
             return;
         }
 
+        await checkAdmin();
+        showDashboard();
+        await loadDashboard();
+
+    } catch (error) {
+        await db.auth.signOut();
+        showLogin();
+
+        showMessage(
+            message,
+            error.message || "Please log in again.",
+            "error"
+        );
+    }
+}
+
+initializeSupabase();
+restoreSession();
+    async function loadDashboard() {
+    try {
+        await Promise.all([
+            loadPlayers(),
+            loadTournaments(),
+            loadStandings()
+        ]);
+    } catch (error) {
+        showDashboardMessage(
+            "Dashboard loading failed: " + error.message
+        );
+    }
+}
+
+async function loadPlayers() {
+    const { data, error } = await db
+        .from("players")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const table = document.getElementById("playersTable");
+
+    if (!data || data.length === 0) {
+        table.innerHTML =
+            '<tr><td colspan="3">No players registered yet.</td></tr>';
+        return;
+    }
+
+    table.innerHTML = data.map(player => `
+        <tr>
+            <td>${escapeHTML(player.display_name)}</td>
+            <td>${player.is_active ? "Active" : "Inactive"}</td>
+            <td>${formatDate(player.created_at)}</td>
+        </tr>
+    `).join("");
+
+    const playerOptions = data
+        .filter(player => player.is_active)
+        .map(player => `
+            <option value="${player.id}">
+                ${escapeHTML(player.display_name)}
+            </option>
+        `).join("");
+
+    document.getElementById("homePlayer").innerHTML =
+        '<option value="">Select Home Player</option>' + playerOptions;
+
+    document.getElementById("awayPlayer").innerHTML =
+        '<option value="">Select Away Player</option>' + playerOptions;
+}
+
+async function loadTournaments() {
+    const { data, error } = await db
+        .from("tournaments")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const table = document.getElementById("tournamentsTable");
+
+    if (!data || data.length === 0) {
+        table.innerHTML =
+            '<tr><td colspan="4">No tournaments created yet.</td></tr>';
+    } else {
+        table.innerHTML = data.map(tournament => `
+            <tr>
+                <td>${escapeHTML(tournament.name)}</td>
+                <td>${escapeHTML(tournament.season || "")}</td>
+                <td>${escapeHTML(tournament.status)}</td>
+                <td>${tournament.start_date || "Not set"}</td>
+            </tr>
+        `).join("");
+    }
+
+    const options = (data || [])
+        .map(tournament => `
+            <option value="${tournament.id}">
+                ${escapeHTML(tournament.name)}
+            </option>
+        `).join("");
+
+    document.getElementById("matchTournament").innerHTML =
+        '<option value="">Select Tournament</option>' + options;
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
+}
+
+function formatDate(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "—";
+
+    return date.toLocaleDateString();
+}
+
+document.getElementById("playerForm")
+.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const button = this.querySelector("button");
+    const name = document.getElementById("playerName").value.trim();
+
+    if (!name) {
+        showDashboardMessage("Enter a player name.");
+        return;
+    }
+
+    button.disabled = true;
+
+    try {
+        const { error } = await db
+            .from("players")
+            .insert({
+                display_name: name,
+                is_active: true
+            });
+
+        if (error) throw error;
+
         this.reset();
-        showDashboardMessage("Player registered successfully!");
+
+        showDashboardMessage(
+            "Player registered successfully!",
+            "success"
+        );
 
         await loadPlayers();
 
     } catch (error) {
-
-        showDashboardMessage("PLAYER ERROR: " + error.message);
-
+        showDashboardMessage(
+            "Player registration failed: " + error.message
+        );
+    } finally {
+        button.disabled = false;
     }
-
 });
 
-// =====================================
-// LOAD PLAYERS
-// =====================================
+document.getElementById("tournamentForm")
+.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-async function loadPlayers() {
+    const button = this.querySelector("button");
 
-    const { data, error } = await db
-        .from("players")
-        .select("id, display_name, is_active")
-        .order("display_name");
+    const name = document.getElementById("tournamentName").value.trim();
+    const season = document.getElementById("tournamentSeason").value.trim();
+    const status = document.getElementById("tournamentStatus").value;
+    const startDate = document.getElementById("tournamentDate").value;
 
-    if (error) {
-        showDashboardMessage("Players error: " + error.message);
+    if (!name || !season) {
+        showDashboardMessage(
+            "Enter the tournament name and season."
+        );
         return;
     }
 
-    const table = document.getElementById("playersTable");
-    const home = document.getElementById("homePlayer");
-    const away = document.getElementById("awayPlayer");
-
-    table.replaceChildren();
-    home.replaceChildren();
-    away.replaceChildren();
-
-    home.add(new Option("Select home player", ""));
-    away.add(new Option("Select away player", ""));
-
-    data.forEach(player => {
-
-        const row = document.createElement("tr");
-
-        const nameCell = document.createElement("td");
-        nameCell.textContent = player.display_name;
-
-        const statusCell = document.createElement("td");
-        statusCell.textContent =
-            player.is_active ? "Active" : "Inactive";
-
-        row.append(nameCell, statusCell);
-        table.appendChild(row);
-
-        if (player.is_active) {
-            home.add(new Option(player.display_name, player.id));
-            away.add(new Option(player.display_name, player.id));
-        }
-
-    });
-
-}
-
-// =====================================
-// CREATE TOURNAMENT
-// =====================================
-
-document.getElementById("tournamentForm")
-.addEventListener("submit", async function(e) {
-
-    e.preventDefault();
-
-    const tournament = {
-        name: document.getElementById("tournamentName").value.trim(),
-        season: document.getElementById("season").value.trim() || null,
-        start_date: document.getElementById("startDate").value || null,
-        status: document.getElementById("tournamentStatus").value
-    };
+    button.disabled = true;
 
     try {
-
         const { error } = await db
             .from("tournaments")
-            .insert(tournament);
+            .insert({
+                name: name,
+                season: season,
+                status: status,
+                start_date: startDate || null
+            });
 
-        if (error) {
-            showDashboardMessage(error.message);
-            return;
-        }
+        if (error) throw error;
 
         this.reset();
-        showDashboardMessage("Tournament created successfully!");
+
+        showDashboardMessage(
+            "Tournament created successfully!",
+            "success"
+        );
 
         await loadTournaments();
 
     } catch (error) {
-
-        showDashboardMessage("TOURNAMENT ERROR: " + error.message);
-
+        showDashboardMessage(
+            "Tournament creation failed: " + error.message
+        );
+    } finally {
+        button.disabled = false;
     }
-
 });
 
-// =====================================
-// LOAD TOURNAMENTS
-// =====================================
-
-async function loadTournaments() {
-
-    const { data, error } = await db
-        .from("tournaments")
-        .select("id, name, season, status, start_date")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-        showDashboardMessage("Tournament loading error: " + error.message);
-        return;
-    }
-
-    const table = document.getElementById("tournamentsTable");
-    const select = document.getElementById("matchTournament");
-
-    table.replaceChildren();
-    select.replaceChildren();
-
-    select.add(new Option("Select tournament", ""));
-
-    data.forEach(t => {
-
-        const row = document.createElement("tr");
-
-        [t.name, t.season || "-", t.status, t.start_date || "-"]
-        .forEach(value => {
-
-            const cell = document.createElement("td");
-            cell.textContent = value;
-            row.appendChild(cell);
-
-        });
-
-        table.appendChild(row);
-
-        if (t.status === "active") {
-            select.add(new Option(t.name, t.id));
-        }
-
-    });
-
-}
-
-// =====================================
-// SAVE MATCH RESULT
-// =====================================
-
 document.getElementById("matchForm")
-.addEventListener("submit", async function(e) {
+.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-    e.preventDefault();
+    const button = this.querySelector("button");
 
     const tournament_id =
         document.getElementById("matchTournament").value;
@@ -728,12 +737,16 @@ document.getElementById("matchForm")
         Number(document.getElementById("awayScore").value);
 
     if (!tournament_id || !home_player_id || !away_player_id) {
-        showDashboardMessage("Please select all match details.");
+        showDashboardMessage(
+            "Please select all match details."
+        );
         return;
     }
 
     if (home_player_id === away_player_id) {
-        showDashboardMessage("A player cannot play against themselves.");
+        showDashboardMessage(
+            "A player cannot play against themselves."
+        );
         return;
     }
 
@@ -743,12 +756,15 @@ document.getElementById("matchForm")
         home_score < 0 ||
         away_score < 0
     ) {
-        showDashboardMessage("Please enter valid non-negative scores.");
+        showDashboardMessage(
+            "Enter valid scores (zero or greater)."
+        );
         return;
     }
 
-    try {
+    button.disabled = true;
 
+    try {
         const { error } = await db
             .from("matches")
             .insert({
@@ -756,81 +772,57 @@ document.getElementById("matchForm")
                 home_player_id,
                 away_player_id,
                 home_score,
-                away_score
+                away_score,
+                played_at: new Date().toISOString()
             });
 
-        if (error) {
-            showDashboardMessage(error.message);
-            return;
-        }
+        if (error) throw error;
 
         this.reset();
-        showDashboardMessage("Match result saved successfully!");
+
+        showDashboardMessage(
+            "Match result saved successfully!",
+            "success"
+        );
 
         await loadStandings();
 
     } catch (error) {
-
-        showDashboardMessage("MATCH ERROR: " + error.message);
-
+        showDashboardMessage(
+            "Saving match failed: " + error.message
+        );
+    } finally {
+        button.disabled = false;
     }
-
 });
-
-// =====================================
-// LOAD LEAGUE STANDINGS
-// =====================================
-
-async function loadStandings() {
-
-    const table = document.getElementById("standingsTable");
-    table.replaceChildren();
-
+    async function loadStandings() {
     const { data, error } = await db
         .from("league_standings")
-        .select("*")
-        .order("pts", { ascending: false })
-        .order("gd", { ascending: false })
-        .order("gf", { ascending: false });
+        .select("*");
 
-    if (error) {
-        showDashboardMessage(
-            "Standings could not load: " + error.message
-        );
+    if (error) throw error;
+
+    const table = document.getElementById("standingsTable");
+
+    if (!data || data.length === 0) {
+        table.innerHTML =
+            '<tr><td colspan="6">No standings available yet.</td></tr>';
         return;
     }
 
-    data.forEach(player => {
-
-        const row = document.createElement("tr");
-
-        [
-            player.player_name,
-            player.mp,
-            player.w,
-            player.d,
-            player.l,
-            player.gf,
-            player.ga,
-            player.gd,
-            player.pts
-        ].forEach(value => {
-
-            const cell = document.createElement("td");
-            cell.textContent = value ?? 0;
-            row.appendChild(cell);
-
-        });
-
-        table.appendChild(row);
-
-    });
-
+    table.innerHTML = data.map(player => `
+        <tr>
+            <td>${escapeHTML(player.display_name)}</td>
+            <td>${player.played ?? 0}</td>
+            <td>${player.won ?? 0}</td>
+            <td>${player.drawn ?? 0}</td>
+            <td>${player.lost ?? 0}</td>
+            <td>${player.points ?? 0}</td>
+        </tr>
+    `).join("");
 }
 
-// =====================================
-// RESTORE EXISTING SESSION
-// =====================================
-
-if (db) {
-    che
+</script>
+</div>
+</body>
+</html>
