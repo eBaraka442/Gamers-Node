@@ -9,11 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background: #090711;
@@ -49,10 +45,7 @@ header span { color: #aaa; font-size: 13px; }
     margin-bottom: 22px;
 }
 
-h2 {
-    color: #c084fc;
-    margin-bottom: 18px;
-}
+h2 { color: #c084fc; margin-bottom: 18px; }
 
 input, select {
     width: 100%;
@@ -100,17 +93,11 @@ th { color: #c084fc; }
 
 #dashboard { display: none; }
 
-#message {
-    margin: 12px 0;
+#message, #dashboardMessage {
     color: #c084fc;
     line-height: 1.5;
+    margin: 12px 0;
     overflow-wrap: anywhere;
-}
-
-#dashboardMessage {
-    color: #c084fc;
-    line-height: 1.5;
-    margin: 12px 0;
 }
 
 small { color: #aaa; }
@@ -132,34 +119,25 @@ small { color: #aaa; }
 
 <div class="container">
 
-    <!-- LOGIN -->
     <section id="loginSection" class="card">
         <h2>Administrator Login</h2>
-
         <p>Sign in using your Gamers-Node administrator account.</p>
 
         <form id="loginForm">
-            <input
-                type="email"
-                id="email"
-                placeholder="Admin email address"
-                required
-            >
+            <input type="email" id="email"
+                placeholder="Admin email address" required>
 
-            <input
-                type="password"
-                id="password"
-                placeholder="Password"
-                required
-            >
+            <input type="password" id="password"
+                placeholder="Password" required>
 
-            <button type="submit">Login to Dashboard</button>
+            <button type="submit" id="loginButton">
+                Login to Dashboard
+            </button>
         </form>
 
         <p id="message"></p>
     </section>
 
-    <!-- DASHBOARD -->
     <section id="dashboard">
 
         <div class="card">
@@ -170,36 +148,23 @@ small { color: #aaa; }
 
         <div class="grid">
 
-            <!-- ADD PLAYER -->
             <div class="card">
                 <h2>Register Player</h2>
-
                 <form id="playerForm">
-                    <input
-                        id="playerName"
-                        placeholder="Player display name"
-                        required
-                    >
+                    <input id="playerName"
+                        placeholder="Player display name" required>
                     <button type="submit">Add Player</button>
                 </form>
             </div>
 
-            <!-- ADD TOURNAMENT -->
             <div class="card">
                 <h2>Create Tournament</h2>
-
                 <form id="tournamentForm">
+                    <input id="tournamentName"
+                        placeholder="Tournament name" required>
 
-                    <input
-                        id="tournamentName"
-                        placeholder="Tournament name"
-                        required
-                    >
-
-                    <input
-                        id="season"
-                        placeholder="Season (optional)"
-                    >
+                    <input id="season"
+                        placeholder="Season (optional)">
 
                     <label>Start date</label>
                     <input type="date" id="startDate">
@@ -217,7 +182,6 @@ small { color: #aaa; }
 
         </div>
 
-        <!-- ADD MATCH -->
         <div class="card">
             <h2>Enter Match Results</h2>
 
@@ -241,24 +205,14 @@ small { color: #aaa; }
                 <div class="grid">
                     <div>
                         <label>Home score</label>
-                        <input
-                            type="number"
-                            id="homeScore"
-                            min="0"
-                            step="1"
-                            required
-                        >
+                        <input type="number" id="homeScore"
+                            min="0" step="1" required>
                     </div>
 
                     <div>
                         <label>Away score</label>
-                        <input
-                            type="number"
-                            id="awayScore"
-                            min="0"
-                            step="1"
-                            required
-                        >
+                        <input type="number" id="awayScore"
+                            min="0" step="1" required>
                     </div>
                 </div>
 
@@ -266,23 +220,18 @@ small { color: #aaa; }
             </form>
         </div>
 
-        <!-- PLAYERS -->
         <div class="card">
             <h2>Registered Players</h2>
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Player</th>
-                            <th>Status</th>
-                        </tr>
+                        <tr><th>Player</th><th>Status</th></tr>
                     </thead>
                     <tbody id="playersTable"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- TOURNAMENTS -->
         <div class="card">
             <h2>Tournaments</h2>
             <div class="table-wrap">
@@ -300,7 +249,6 @@ small { color: #aaa; }
             </div>
         </div>
 
-        <!-- STANDINGS -->
         <div class="card">
             <h2>League Standings</h2>
             <small>Automatically calculated from recorded match results.</small>
@@ -328,7 +276,6 @@ small { color: #aaa; }
         <p id="dashboardMessage"></p>
 
     </section>
-
 </div>
 
 <script>
@@ -343,9 +290,23 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
+// Check that the Supabase library loaded
+if (!window.supabase) {
+    document.getElementById("message").textContent =
+        "ERROR: Supabase library failed to load. Check your internet connection.";
+    throw new Error("Supabase library unavailable");
+}
+
 const db = window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
 );
 
 // =====================================
@@ -357,6 +318,7 @@ const dashboard = document.getElementById("dashboard");
 const message = document.getElementById("message");
 const dashboardMessage = document.getElementById("dashboardMessage");
 const logoutBtn = document.getElementById("logoutBtn");
+const loginButton = document.getElementById("loginButton");
 
 function showMessage(text) {
     message.textContent = text;
@@ -366,73 +328,92 @@ function showDashboardMessage(text) {
     dashboardMessage.textContent = text;
 }
 
+function showLogin() {
+    loginSection.style.display = "block";
+    dashboard.style.display = "none";
+    logoutBtn.style.display = "none";
+}
+
+// =====================================
+// CONNECTION DIAGNOSTIC
+// =====================================
+
+async function testSupabaseConnection() {
+    try {
+        const response = await fetch(
+            SUPABASE_URL + "/auth/v1/settings",
+            {
+                method: "GET",
+                headers: {
+                    "apikey": SUPABASE_KEY
+                }
+            }
+        );
+
+        if (!response.ok) {
+            return "API responded with HTTP " + response.status;
+        }
+
+        return "Connection successful";
+
+    } catch (error) {
+        return "Connection failed: " + error.message;
+    }
+}
+
 // =====================================
 // ADMIN AUTHENTICATION
 // =====================================
 
 async function checkAdmin() {
+    try {
+        const { data, error } = await db.auth.getUser();
 
-    showMessage("Checking administrator access...");
+        if (error) {
+            showLogin();
+            showMessage("SESSION ERROR: " + error.message);
+            return;
+        }
 
-    const { data: { user }, error } =
-        await db.auth.getUser();
+        const user = data.user;
 
-    if (error) {
+        if (!user) {
+            showLogin();
+            return;
+        }
+
+        const { data: adminResult, error: adminError } =
+            await db.rpc("is_admin");
+
+        if (adminError) {
+            showLogin();
+            showMessage("ADMIN CHECK ERROR: " + adminError.message);
+            return;
+        }
+
+        if (adminResult !== true) {
+            showLogin();
+            showMessage(
+                "Your account is signed in but does not have administrator access."
+            );
+            return;
+        }
+
+        loginSection.style.display = "none";
+        dashboard.style.display = "block";
+        logoutBtn.style.display = "block";
+
+        document.getElementById("adminEmail").textContent =
+            "Signed in as: " + user.email;
+
+        showMessage("");
+
+        await loadDashboard();
+
+    } catch (error) {
         showLogin();
-        showMessage("LOGIN CHECK ERROR: " + error.message);
-        return;
+        showMessage("SESSION NETWORK ERROR: " + error.message);
     }
-
-    if (!user) {
-        showLogin();
-        return;
-    }
-
-    // Check administrator status in Supabase
-    const { data, error: adminError } =
-        await db.rpc("is_admin");
-
-    // SHOW THE REAL RPC ERROR
-    if (adminError) {
-        showLogin();
-
-        showMessage(
-            "RPC ERROR: " + adminError.message
-        );
-
-        return;
-    }
-
-    // SHOW THE ACTUAL RESULT
-    if (data !== true) {
-        showLogin();
-
-        showMessage(
-            "ADMIN CHECK RESULT: " +
-            JSON.stringify(data) +
-            " | TYPE: " + typeof data
-        );
-
-        return;
-    }
-
-    // ACCESS GRANTED
-    loginSection.style.display = "none";
-    dashboard.style.display = "block";
-    logoutBtn.style.display = "block";
-
-    document.getElementById("adminEmail").textContent =
-        "Signed in as: " + user.email;
-
-    showMessage("");
-
-    await loadDashboard();
-}
-
-function showLogin() {
-    loginSection.style.display = "block";
-    dashboard.style.display = "none";
-    logoutBtn.style.display = "none";
 }
 
 // =====================================
@@ -444,25 +425,57 @@ document.getElementById("loginForm")
 
     e.preventDefault();
 
-    showMessage("Signing in...");
+    loginButton.disabled = true;
+    loginButton.textContent = "Connecting...";
+    showMessage("Checking Supabase connection...");
 
-    const email =
-        document.getElementById("email").value.trim();
+    try {
 
-    const password =
-        document.getElementById("password").value;
+        const connection = await testSupabaseConnection();
 
-    const { error } = await db.auth.signInWithPassword({
-        email,
-        password
-    });
+        if (connection !== "Connection successful") {
+            showMessage(connection);
+            return;
+        }
 
-    if (error) {
-        showMessage("LOGIN ERROR: " + error.message);
-        return;
+        showMessage("Connection successful. Signing in...");
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const { data, error } =
+            await db.auth.signInWithPassword({
+                email,
+                password
+            });
+
+        if (error) {
+            showMessage("LOGIN ERROR: " + error.message);
+            return;
+        }
+
+        if (!data.user) {
+            showMessage("Login did not return a user account.");
+            return;
+        }
+
+        await checkAdmin();
+
+    } catch (error) {
+
+        showMessage(
+            "LOGIN NETWORK ERROR: " +
+            error.message +
+            ". Check browser connectivity or request blocking."
+        );
+
+    } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Login to Dashboard";
     }
-
-    await checkAdmin();
 });
 
 // =====================================
@@ -471,23 +484,30 @@ document.getElementById("loginForm")
 
 logoutBtn.addEventListener("click", async function() {
 
-    const { error } = await db.auth.signOut();
+    try {
+        const { error } = await db.auth.signOut();
 
-    if (error) {
-        showDashboardMessage(error.message);
-        return;
+        if (error) {
+            showDashboardMessage(error.message);
+            return;
+        }
+
+        showLogin();
+        showMessage("You have logged out.");
+
+    } catch (error) {
+        showDashboardMessage("LOGOUT ERROR: " + error.message);
     }
-
-    showLogin();
-    showMessage("You have logged out.");
 });
 
-db.auth.onAuthStateChange((event) => {
+// =====================================
+// AUTHENTICATION STATE
+// =====================================
 
+db.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_OUT") {
         showLogin();
     }
-
 });
 
 // =====================================
@@ -521,20 +541,24 @@ document.getElementById("playerForm")
 
     if (!name) return;
 
-    const { error } = await db
-        .from("players")
-        .insert({ display_name: name });
+    try {
+        const { error } = await db
+            .from("players")
+            .insert({ display_name: name });
 
-    if (error) {
-        showDashboardMessage(error.message);
-        return;
+        if (error) {
+            showDashboardMessage(error.message);
+            return;
+        }
+
+        this.reset();
+        showDashboardMessage("Player registered successfully!");
+
+        await loadPlayers();
+
+    } catch (error) {
+        showDashboardMessage("PLAYER ERROR: " + error.message);
     }
-
-    this.reset();
-
-    showDashboardMessage("Player registered successfully!");
-
-    await loadPlayers();
 });
 
 // =====================================
@@ -549,7 +573,7 @@ async function loadPlayers() {
         .order("display_name");
 
     if (error) {
-        showDashboardMessage(error.message);
+        showDashboardMessage("Players error: " + error.message);
         return;
     }
 
@@ -594,39 +618,31 @@ document.getElementById("tournamentForm")
 
     e.preventDefault();
 
-    const name =
-        document.getElementById("tournamentName").value.trim();
-
-    const season =
-        document.getElementById("season").value.trim();
-
-    const startDate =
-        document.getElementById("startDate").value;
-
-    const status =
-        document.getElementById("tournamentStatus").value;
-
     const tournament = {
-        name,
-        status,
-        season: season || null,
-        start_date: startDate || null
+        name: document.getElementById("tournamentName").value.trim(),
+        season: document.getElementById("season").value.trim() || null,
+        start_date: document.getElementById("startDate").value || null,
+        status: document.getElementById("tournamentStatus").value
     };
 
-    const { error } = await db
-        .from("tournaments")
-        .insert(tournament);
+    try {
+        const { error } = await db
+            .from("tournaments")
+            .insert(tournament);
 
-    if (error) {
-        showDashboardMessage(error.message);
-        return;
+        if (error) {
+            showDashboardMessage(error.message);
+            return;
+        }
+
+        this.reset();
+        showDashboardMessage("Tournament created successfully!");
+
+        await loadTournaments();
+
+    } catch (error) {
+        showDashboardMessage("TOURNAMENT ERROR: " + error.message);
     }
-
-    this.reset();
-
-    showDashboardMessage("Tournament created successfully!");
-
-    await loadTournaments();
 });
 
 // =====================================
@@ -641,7 +657,7 @@ async function loadTournaments() {
         .order("created_at", { ascending: false });
 
     if (error) {
-        showDashboardMessage(error.message);
+        showDashboardMessage("Tournament loading error: " + error.message);
         return;
     }
 
@@ -657,17 +673,11 @@ async function loadTournaments() {
 
         const row = document.createElement("tr");
 
-        [
-            t.name,
-            t.season || "-",
-            t.status,
-            t.start_date || "-"
-        ].forEach(value => {
-
+        [t.name, t.season || "-", t.status, t.start_date || "-"]
+        .forEach(value => {
             const cell = document.createElement("td");
             cell.textContent = value;
             row.appendChild(cell);
-
         });
 
         table.appendChild(row);
@@ -722,26 +732,30 @@ document.getElementById("matchForm")
         return;
     }
 
-    const { error } = await db
-        .from("matches")
-        .insert({
-            tournament_id,
-            home_player_id,
-            away_player_id,
-            home_score,
-            away_score
-        });
+    try {
+        const { error } = await db
+            .from("matches")
+            .insert({
+                tournament_id,
+                home_player_id,
+                away_player_id,
+                home_score,
+                away_score
+            });
 
-    if (error) {
-        showDashboardMessage(error.message);
-        return;
+        if (error) {
+            showDashboardMessage(error.message);
+            return;
+        }
+
+        this.reset();
+        showDashboardMessage("Match result saved successfully!");
+
+        await loadStandings();
+
+    } catch (error) {
+        showDashboardMessage("MATCH ERROR: " + error.message);
     }
-
-    this.reset();
-
-    showDashboardMessage("Match result saved successfully!");
-
-    await loadStandings();
 });
 
 // =====================================
@@ -750,16 +764,15 @@ document.getElementById("matchForm")
 
 async function loadStandings() {
 
+    const table = document.getElementById("standingsTable");
+    table.replaceChildren();
+
     const { data, error } = await db
         .from("league_standings")
         .select("*")
         .order("pts", { ascending: false })
         .order("gd", { ascending: false })
         .order("gf", { ascending: false });
-
-    const table = document.getElementById("standingsTable");
-
-    table.replaceChildren();
 
     if (error) {
         showDashboardMessage(
@@ -780,27 +793,4 @@ async function loadStandings() {
             player.l,
             player.gf,
             player.ga,
-            player.gd,
-            player.pts
-        ].forEach(value => {
-
-            const cell = document.createElement("td");
-            cell.textContent = value ?? 0;
-            row.appendChild(cell);
-
-        });
-
-        table.appendChild(row);
-    });
-}
-
-// =====================================
-// RESTORE EXISTING SESSION
-// =====================================
-
-checkAdmin();
-
-</script>
-
-</body>
-</html>
+ 
