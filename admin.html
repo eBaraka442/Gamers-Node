@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Gamers-Node | Admin Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -76,6 +78,7 @@ button:disabled {
     padding: 10px;
     border-radius: 6px;
     display: none;
+    overflow-wrap: anywhere;
 }
 
 .success {
@@ -114,6 +117,15 @@ th {
     display: none;
 }
 
+.forgot-button {
+    background: #241438;
+    border: 1px solid #8b5cf6;
+}
+
+.forgot-button:hover {
+    background: #39205c;
+}
+
 @media (max-width: 600px) {
     body {
         padding: 10px;
@@ -127,14 +139,17 @@ th {
 </head>
 
 <body>
+
 <div class="container">
 
 <h1>Gamers-Node Admin Dashboard</h1>
 
 <section id="loginSection">
+
     <h2>Admin Login</h2>
 
     <form id="loginForm">
+
         <input
             type="email"
             id="email"
@@ -152,18 +167,30 @@ th {
         <button type="submit" id="loginButton">
             Login
         </button>
+
+        <button
+            type="button"
+            id="forgotPasswordButton"
+            class="forgot-button"
+        >
+            Forgot Password?
+        </button>
+
     </form>
 
     <div id="message" class="message"></div>
+
 </section>
 
 <div id="dashboard">
 
     <section>
         <h2>Welcome, Admin</h2>
+
         <button type="button" id="logoutButton">
             Logout
         </button>
+
         <div id="dashboardMessage" class="message"></div>
     </section>
 
@@ -171,6 +198,7 @@ th {
         <h2>Register Player</h2>
 
         <form id="playerForm">
+
             <input
                 type="text"
                 id="playerName"
@@ -181,6 +209,7 @@ th {
             <button type="submit">
                 Register Player
             </button>
+
         </form>
     </section>
 
@@ -188,6 +217,7 @@ th {
         <h2>Create Tournament</h2>
 
         <form id="tournamentForm">
+
             <input
                 type="text"
                 id="tournamentName"
@@ -216,6 +246,7 @@ th {
             <button type="submit">
                 Create Tournament
             </button>
+
         </form>
     </section>
 
@@ -261,6 +292,7 @@ th {
 
     <section>
         <h2>Registered Players</h2>
+
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -270,6 +302,7 @@ th {
                         <th>Registered</th>
                     </tr>
                 </thead>
+
                 <tbody id="playersTable">
                     <tr>
                         <td colspan="3">Loading players...</td>
@@ -281,6 +314,7 @@ th {
 
     <section>
         <h2>Tournaments</h2>
+
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -291,6 +325,7 @@ th {
                         <th>Start Date</th>
                     </tr>
                 </thead>
+
                 <tbody id="tournamentsTable">
                     <tr>
                         <td colspan="4">Loading tournaments...</td>
@@ -302,6 +337,7 @@ th {
 
     <section>
         <h2>League Standings</h2>
+
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -314,6 +350,7 @@ th {
                         <th>Points</th>
                     </tr>
                 </thead>
+
                 <tbody id="standingsTable">
                     <tr>
                         <td colspan="6">Loading standings...</td>
@@ -324,22 +361,26 @@ th {
     </section>
 
 </div>
-<script>
-const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
-let db = null;
-let adminCheckPromise = null;
+<script>
+    <script>
+        
+const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
+const SUPABASE_KEY = "YOUR_PUBLIC_SUPABASE_KEY";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 const loginSection = document.getElementById("loginSection");
 const dashboard = document.getElementById("dashboard");
 const loginForm = document.getElementById("loginForm");
 const loginButton = document.getElementById("loginButton");
-const logoutButton = document.getElementById("logoutButton");
 const message = document.getElementById("message");
 const dashboardMessage = document.getElementById("dashboardMessage");
 
-function showMessage(element, text, type) {
+function showMessage(element, text, type = "error") {
     element.textContent = text;
     element.className = "message " + type;
     element.style.display = "block";
@@ -360,69 +401,101 @@ function showDashboard() {
     dashboard.style.display = "block";
 }
 
-function showDashboardMessage(text, type = "error") {
-    showMessage(dashboardMessage, text, type);
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
 }
 
-function initializeSupabase() {
-    if (!window.supabase) {
-        throw new Error("Supabase library failed to load.");
-    }
-
-    db = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY,
-        {
-            auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-            }
-        }
-    );
+function formatDate(value) {
+    if (!value) return "—";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+        ? "—"
+        : date.toLocaleDateString();
 }
+
+// ADMIN VERIFICATION
 
 async function checkAdmin() {
-    if (adminCheckPromise) {
-        return adminCheckPromise;
+    const { data: { user }, error: userError } =
+        await db.auth.getUser();
+
+    if (userError || !user) {
+        throw new Error("Please log in again.");
     }
 
-    adminCheckPromise = (async () => {
-        const { data: { user }, error: userError } =
-            await db.auth.getUser();
+    const { data, error } = await db
+        .from("admin_users")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-        if (userError || !user) {
-            throw new Error("Please log in again.");
-        }
+    if (error) throw error;
 
-        const { data, error } = await db
-            .from("admin_users")
-            .select("role")
-            .eq("user_id", user.id)
-            .maybeSingle();
-
-        if (error) {
-            throw new Error(
-                "Could not verify admin access: " + error.message
-            );
-        }
-
-        if (!data || !["admin", "super_admin"].includes(data.role)) {
-            throw new Error("This account does not have admin access.");
-        }
-
-        return user;
-    })();
-
-    try {
-        return await adminCheckPromise;
-    } finally {
-        adminCheckPromise = null;
+    if (!data || !["admin", "super_admin"].includes(data.role)) {
+        throw new Error("This account does not have admin access.");
     }
+
+    return user;
 }
 
-async function handleLogin(email, password) {
-    hideMessage(message);
+// FORGOT PASSWORD
+
+document.getElementById("forgotPasswordButton")
+.addEventListener("click", async function() {
+
+    const email = document.getElementById("email").value.trim();
+
+    if (!email) {
+        showMessage(message, "Enter your admin email first.");
+        return;
+    }
+
+    this.disabled = true;
+    this.textContent = "Sending recovery email...";
+
+    try {
+        const { error } = await db.auth.resetPasswordForEmail(
+            email,
+            {
+                redirectTo:
+                "https://ebaraka442.github.io/Gamers-Node/reset-password.html"
+            }
+        );
+
+        if (error) throw error;
+
+        showMessage(
+            message,
+            "Recovery email sent. Check your inbox.",
+            "success"
+        );
+
+    } catch (error) {
+        showMessage(
+            message,
+            "Recovery failed: " + error.message
+        );
+
+    } finally {
+        this.disabled = false;
+        this.textContent = "Forgot Password?";
+    }
+});
+
+// LOGIN
+
+loginForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
     loginButton.disabled = true;
     loginButton.textContent = "Logging in...";
 
@@ -432,13 +505,12 @@ async function handleLogin(email, password) {
             password
         });
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         await checkAdmin();
 
         showDashboard();
+
         showMessage(
             dashboardMessage,
             "Login successful. Welcome to Gamers-Node!",
@@ -450,47 +522,36 @@ async function handleLogin(email, password) {
     } catch (error) {
         await db.auth.signOut();
         showLogin();
-
-        showMessage(
-            message,
-            error.message || "Login failed. Please try again.",
-            "error"
-        );
+        showMessage(message, error.message);
 
     } finally {
         loginButton.disabled = false;
         loginButton.textContent = "Login";
     }
-}
-
-loginForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    await handleLogin(email, password);
 });
 
-logoutButton.addEventListener("click", async function() {
-    try {
-        await db.auth.signOut();
-        showLogin();
-        hideMessage(message);
-    } catch (error) {
-        showDashboardMessage(
-            "Logout failed: " + error.message
-        );
+// LOGOUT
+
+document.getElementById("logoutButton")
+.addEventListener("click", async function() {
+    const { error } = await db.auth.signOut();
+
+    if (error) {
+        showMessage(dashboardMessage, error.message);
+        return;
     }
+
+    showLogin();
+    hideMessage(message);
 });
+
+// RESTORE SESSION
 
 async function restoreSession() {
     try {
         const { data, error } = await db.auth.getSession();
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         if (!data.session) {
             showLogin();
@@ -504,18 +565,13 @@ async function restoreSession() {
     } catch (error) {
         await db.auth.signOut();
         showLogin();
-
-        showMessage(
-            message,
-            error.message || "Please log in again.",
-            "error"
-        );
+        showMessage(message, error.message);
     }
 }
 
-initializeSupabase();
-restoreSession();
-    async function loadDashboard() {
+// LOAD DASHBOARD
+
+async function loadDashboard() {
     try {
         await Promise.all([
             loadPlayers(),
@@ -523,11 +579,14 @@ restoreSession();
             loadStandings()
         ]);
     } catch (error) {
-        showDashboardMessage(
+        showMessage(
+            dashboardMessage,
             "Dashboard loading failed: " + error.message
         );
     }
 }
+
+// PLAYERS
 
 async function loadPlayers() {
     const { data, error } = await db
@@ -553,20 +612,22 @@ async function loadPlayers() {
         </tr>
     `).join("");
 
-    const playerOptions = data
+    const options = data
         .filter(player => player.is_active)
         .map(player => `
-            <option value="${player.id}">
+            <option value="${escapeHTML(player.id)}">
                 ${escapeHTML(player.display_name)}
             </option>
         `).join("");
 
     document.getElementById("homePlayer").innerHTML =
-        '<option value="">Select Home Player</option>' + playerOptions;
+        '<option value="">Select Home Player</option>' + options;
 
     document.getElementById("awayPlayer").innerHTML =
-        '<option value="">Select Away Player</option>' + playerOptions;
+        '<option value="">Select Away Player</option>' + options;
 }
+
+// TOURNAMENTS
 
 async function loadTournaments() {
     const { data, error } = await db
@@ -587,41 +648,22 @@ async function loadTournaments() {
                 <td>${escapeHTML(tournament.name)}</td>
                 <td>${escapeHTML(tournament.season || "")}</td>
                 <td>${escapeHTML(tournament.status)}</td>
-                <td>${tournament.start_date || "Not set"}</td>
+                <td>${escapeHTML(tournament.start_date || "Not set")}</td>
             </tr>
         `).join("");
     }
 
-    const options = (data || [])
-        .map(tournament => `
-            <option value="${tournament.id}">
-                ${escapeHTML(tournament.name)}
-            </option>
-        `).join("");
+    const options = (data || []).map(tournament => `
+        <option value="${escapeHTML(tournament.id)}">
+            ${escapeHTML(tournament.name)}
+        </option>
+    `).join("");
 
     document.getElementById("matchTournament").innerHTML =
         '<option value="">Select Tournament</option>' + options;
 }
 
-function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    })[character]);
-}
-
-function formatDate(value) {
-    if (!value) return "—";
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) return "—";
-
-    return date.toLocaleDateString();
-}
+// REGISTER PLAYER
 
 document.getElementById("playerForm")
 .addEventListener("submit", async function(event) {
@@ -630,10 +672,7 @@ document.getElementById("playerForm")
     const button = this.querySelector("button");
     const name = document.getElementById("playerName").value.trim();
 
-    if (!name) {
-        showDashboardMessage("Enter a player name.");
-        return;
-    }
+    if (!name) return;
 
     button.disabled = true;
 
@@ -649,7 +688,8 @@ document.getElementById("playerForm")
 
         this.reset();
 
-        showDashboardMessage(
+        showMessage(
+            dashboardMessage,
             "Player registered successfully!",
             "success"
         );
@@ -657,13 +697,13 @@ document.getElementById("playerForm")
         await loadPlayers();
 
     } catch (error) {
-        showDashboardMessage(
-            "Player registration failed: " + error.message
-        );
+        showMessage(dashboardMessage, error.message);
     } finally {
         button.disabled = false;
     }
 });
+
+// CREATE TOURNAMENT
 
 document.getElementById("tournamentForm")
 .addEventListener("submit", async function(event) {
@@ -676,22 +716,15 @@ document.getElementById("tournamentForm")
     const status = document.getElementById("tournamentStatus").value;
     const startDate = document.getElementById("tournamentDate").value;
 
-    if (!name || !season) {
-        showDashboardMessage(
-            "Enter the tournament name and season."
-        );
-        return;
-    }
-
     button.disabled = true;
 
     try {
         const { error } = await db
             .from("tournaments")
             .insert({
-                name: name,
-                season: season,
-                status: status,
+                name,
+                season,
+                status,
                 start_date: startDate || null
             });
 
@@ -699,7 +732,8 @@ document.getElementById("tournamentForm")
 
         this.reset();
 
-        showDashboardMessage(
+        showMessage(
+            dashboardMessage,
             "Tournament created successfully!",
             "success"
         );
@@ -707,13 +741,13 @@ document.getElementById("tournamentForm")
         await loadTournaments();
 
     } catch (error) {
-        showDashboardMessage(
-            "Tournament creation failed: " + error.message
-        );
+        showMessage(dashboardMessage, error.message);
     } finally {
         button.disabled = false;
     }
 });
+
+// SAVE MATCH RESULTS
 
 document.getElementById("matchForm")
 .addEventListener("submit", async function(event) {
@@ -737,14 +771,13 @@ document.getElementById("matchForm")
         Number(document.getElementById("awayScore").value);
 
     if (!tournament_id || !home_player_id || !away_player_id) {
-        showDashboardMessage(
-            "Please select all match details."
-        );
+        showMessage(dashboardMessage, "Select all match details.");
         return;
     }
 
     if (home_player_id === away_player_id) {
-        showDashboardMessage(
+        showMessage(
+            dashboardMessage,
             "A player cannot play against themselves."
         );
         return;
@@ -756,9 +789,7 @@ document.getElementById("matchForm")
         home_score < 0 ||
         away_score < 0
     ) {
-        showDashboardMessage(
-            "Enter valid scores (zero or greater)."
-        );
+        showMessage(dashboardMessage, "Enter valid scores.");
         return;
     }
 
@@ -780,7 +811,8 @@ document.getElementById("matchForm")
 
         this.reset();
 
-        showDashboardMessage(
+        showMessage(
+            dashboardMessage,
             "Match result saved successfully!",
             "success"
         );
@@ -788,14 +820,15 @@ document.getElementById("matchForm")
         await loadStandings();
 
     } catch (error) {
-        showDashboardMessage(
-            "Saving match failed: " + error.message
-        );
+        showMessage(dashboardMessage, error.message);
     } finally {
         button.disabled = false;
     }
 });
-    async function loadStandings() {
+
+// LEAGUE STANDINGS
+
+async function loadStandings() {
     const { data, error } = await db
         .from("league_standings")
         .select("*");
@@ -822,7 +855,11 @@ document.getElementById("matchForm")
     `).join("");
 }
 
+// START APPLICATION
+
+restoreSession();
 </script>
+
 </div>
 </body>
 </html>
