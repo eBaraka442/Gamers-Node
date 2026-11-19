@@ -68,6 +68,7 @@ button {
 }
 
 button:hover { background: #a879ff; }
+button:disabled { opacity: 0.6; cursor: wait; }
 .logout { background: #382044; }
 
 .grid {
@@ -279,7 +280,6 @@ small { color: #aaa; }
 </div>
 
 <script>
-
 // =====================================
 // SUPABASE CONFIGURATION
 // =====================================
@@ -289,25 +289,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
-
-// Check that the Supabase library loaded
-if (!window.supabase) {
-    document.getElementById("message").textContent =
-        "ERROR: Supabase library failed to load. Check your internet connection.";
-    throw new Error("Supabase library unavailable");
-}
-
-const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-        }
-    }
-);
 
 // =====================================
 // PAGE ELEMENTS
@@ -319,6 +300,7 @@ const message = document.getElementById("message");
 const dashboardMessage = document.getElementById("dashboardMessage");
 const logoutBtn = document.getElementById("logoutBtn");
 const loginButton = document.getElementById("loginButton");
+const loginForm = document.getElementById("loginForm");
 
 function showMessage(text) {
     message.textContent = text;
@@ -335,30 +317,95 @@ function showLogin() {
 }
 
 // =====================================
-// CONNECTION DIAGNOSTIC
+// LOGIN HANDLER
+// REGISTER THIS BEFORE SUPABASE CHECK
 // =====================================
 
-async function testSupabaseConnection() {
+loginForm.addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    if (!db) {
+        showMessage(
+            "Supabase library is unavailable. Reload the page and check your internet connection."
+        );
+        return;
+    }
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    loginButton.disabled = true;
+    loginButton.textContent = "Signing in...";
+    showMessage("Connecting to Gamers-Node...");
+
     try {
-        const response = await fetch(
-            SUPABASE_URL + "/auth/v1/settings",
+
+        const { data, error } = await db.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            showMessage("LOGIN ERROR: " + error.message);
+            return;
+        }
+
+        if (!data.user) {
+            showMessage("Login did not return a user account.");
+            return;
+        }
+
+        showMessage("Login successful. Checking administrator access...");
+
+        await checkAdmin();
+
+    } catch (error) {
+
+        showMessage("LOGIN ERROR: " + error.message);
+
+    } finally {
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Login to Dashboard";
+
+    }
+});
+
+// =====================================
+// INITIALIZE SUPABASE
+// =====================================
+
+let db = null;
+
+if (window.supabase) {
+
+    try {
+
+        db = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY,
             {
-                method: "GET",
-                headers: {
-                    "apikey": SUPABASE_KEY
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
                 }
             }
         );
 
-        if (!response.ok) {
-            return "API responded with HTTP " + response.status;
-        }
-
-        return "Connection successful";
-
     } catch (error) {
-        return "Connection failed: " + error.message;
+
+        showMessage("SUPABASE INITIALIZATION ERROR: " + error.message);
+
     }
+
+} else {
+
+    showMessage(
+        "Supabase library failed to load. Check your internet connection and reload."
+    );
+
 }
 
 // =====================================
@@ -366,7 +413,9 @@ async function testSupabaseConnection() {
 // =====================================
 
 async function checkAdmin() {
+
     try {
+
         const { data, error } = await db.auth.getUser();
 
         if (error) {
@@ -394,7 +443,7 @@ async function checkAdmin() {
         if (adminResult !== true) {
             showLogin();
             showMessage(
-                "Your account is signed in but does not have administrator access."
+                "Your account does not have administrator access."
             );
             return;
         }
@@ -411,72 +460,12 @@ async function checkAdmin() {
         await loadDashboard();
 
     } catch (error) {
+
         showLogin();
-        showMessage("SESSION NETWORK ERROR: " + error.message);
+        showMessage("ADMIN CHECK ERROR: " + error.message);
+
     }
 }
-
-// =====================================
-// LOGIN FORM
-// =====================================
-
-document.getElementById("loginForm")
-.addEventListener("submit", async function(e) {
-
-    e.preventDefault();
-
-    loginButton.disabled = true;
-    loginButton.textContent = "Connecting...";
-    showMessage("Checking Supabase connection...");
-
-    try {
-
-        const connection = await testSupabaseConnection();
-
-        if (connection !== "Connection successful") {
-            showMessage(connection);
-            return;
-        }
-
-        showMessage("Connection successful. Signing in...");
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const password =
-            document.getElementById("password").value;
-
-        const { data, error } =
-            await db.auth.signInWithPassword({
-                email,
-                password
-            });
-
-        if (error) {
-            showMessage("LOGIN ERROR: " + error.message);
-            return;
-        }
-
-        if (!data.user) {
-            showMessage("Login did not return a user account.");
-            return;
-        }
-
-        await checkAdmin();
-
-    } catch (error) {
-
-        showMessage(
-            "LOGIN NETWORK ERROR: " +
-            error.message +
-            ". Check browser connectivity or request blocking."
-        );
-
-    } finally {
-        loginButton.disabled = false;
-        loginButton.textContent = "Login to Dashboard";
-    }
-});
 
 // =====================================
 // LOGOUT
@@ -484,7 +473,10 @@ document.getElementById("loginForm")
 
 logoutBtn.addEventListener("click", async function() {
 
+    if (!db) return;
+
     try {
+
         const { error } = await db.auth.signOut();
 
         if (error) {
@@ -496,7 +488,9 @@ logoutBtn.addEventListener("click", async function() {
         showMessage("You have logged out.");
 
     } catch (error) {
+
         showDashboardMessage("LOGOUT ERROR: " + error.message);
+
     }
 });
 
@@ -504,11 +498,17 @@ logoutBtn.addEventListener("click", async function() {
 // AUTHENTICATION STATE
 // =====================================
 
-db.auth.onAuthStateChange((event) => {
-    if (event === "SIGNED_OUT") {
-        showLogin();
-    }
-});
+if (db) {
+
+    db.auth.onAuthStateChange((event) => {
+
+        if (event === "SIGNED_OUT") {
+            showLogin();
+        }
+
+    });
+
+}
 
 // =====================================
 // LOAD DASHBOARD
@@ -525,6 +525,7 @@ async function loadDashboard() {
     ]);
 
     showDashboardMessage("Dashboard data loaded.");
+
 }
 
 // =====================================
@@ -542,6 +543,7 @@ document.getElementById("playerForm")
     if (!name) return;
 
     try {
+
         const { error } = await db
             .from("players")
             .insert({ display_name: name });
@@ -557,8 +559,11 @@ document.getElementById("playerForm")
         await loadPlayers();
 
     } catch (error) {
+
         showDashboardMessage("PLAYER ERROR: " + error.message);
+
     }
+
 });
 
 // =====================================
@@ -606,7 +611,9 @@ async function loadPlayers() {
             home.add(new Option(player.display_name, player.id));
             away.add(new Option(player.display_name, player.id));
         }
+
     });
+
 }
 
 // =====================================
@@ -626,6 +633,7 @@ document.getElementById("tournamentForm")
     };
 
     try {
+
         const { error } = await db
             .from("tournaments")
             .insert(tournament);
@@ -641,8 +649,11 @@ document.getElementById("tournamentForm")
         await loadTournaments();
 
     } catch (error) {
+
         showDashboardMessage("TOURNAMENT ERROR: " + error.message);
+
     }
+
 });
 
 // =====================================
@@ -675,9 +686,11 @@ async function loadTournaments() {
 
         [t.name, t.season || "-", t.status, t.start_date || "-"]
         .forEach(value => {
+
             const cell = document.createElement("td");
             cell.textContent = value;
             row.appendChild(cell);
+
         });
 
         table.appendChild(row);
@@ -685,7 +698,9 @@ async function loadTournaments() {
         if (t.status === "active") {
             select.add(new Option(t.name, t.id));
         }
+
     });
+
 }
 
 // =====================================
@@ -733,6 +748,7 @@ document.getElementById("matchForm")
     }
 
     try {
+
         const { error } = await db
             .from("matches")
             .insert({
@@ -754,8 +770,11 @@ document.getElementById("matchForm")
         await loadStandings();
 
     } catch (error) {
+
         showDashboardMessage("MATCH ERROR: " + error.message);
+
     }
+
 });
 
 // =====================================
@@ -793,4 +812,25 @@ async function loadStandings() {
             player.l,
             player.gf,
             player.ga,
- 
+            player.gd,
+            player.pts
+        ].forEach(value => {
+
+            const cell = document.createElement("td");
+            cell.textContent = value ?? 0;
+            row.appendChild(cell);
+
+        });
+
+        table.appendChild(row);
+
+    });
+
+}
+
+// =====================================
+// RESTORE EXISTING SESSION
+// =====================================
+
+if (db) {
+    che
