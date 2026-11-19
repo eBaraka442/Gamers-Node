@@ -363,10 +363,12 @@ th {
 </div>
 
 <script>
-    <script>
-        
+    
 const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
+
+const RESET_PASSWORD_URL =
+    "https://ebaraka442.github.io/Gamers-Node/reset-password.html";
 
 const db = window.supabase.createClient(
     SUPABASE_URL,
@@ -413,7 +415,9 @@ function escapeHTML(value) {
 
 function formatDate(value) {
     if (!value) return "—";
+
     const date = new Date(value);
+
     return Number.isNaN(date.getTime())
         ? "—"
         : date.toLocaleDateString();
@@ -463,8 +467,7 @@ document.getElementById("forgotPasswordButton")
         const { error } = await db.auth.resetPasswordForEmail(
             email,
             {
-                redirectTo:
-                "https://ebaraka442.github.io/Gamers-Node/reset-password.html"
+                redirectTo: RESET_PASSWORD_URL
             }
         );
 
