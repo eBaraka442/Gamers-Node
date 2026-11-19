@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,14 +32,8 @@ header {
     gap: 12px;
 }
 
-header h1 {
-    color: #c084fc;
-}
-
-header span {
-    color: #aaa;
-    font-size: 13px;
-}
+header h1 { color: #c084fc; }
+header span { color: #aaa; font-size: 13px; }
 
 .container {
     max-width: 1100px;
@@ -79,13 +74,8 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    background: #a879ff;
-}
-
-.logout {
-    background: #382044;
-}
+button:hover { background: #a879ff; }
+.logout { background: #382044; }
 
 .grid {
     display: grid;
@@ -105,28 +95,25 @@ th, td {
     text-align: left;
 }
 
-th {
-    color: #c084fc;
-}
+th { color: #c084fc; }
+.table-wrap { overflow-x: auto; }
 
-.table-wrap {
-    overflow-x: auto;
-}
-
-#dashboard {
-    display: none;
-}
+#dashboard { display: none; }
 
 #message {
     margin: 12px 0;
     color: #c084fc;
     line-height: 1.5;
+    overflow-wrap: anywhere;
 }
 
-small {
-    color: #aaa;
+#dashboardMessage {
+    color: #c084fc;
+    line-height: 1.5;
+    margin: 12px 0;
 }
 
+small { color: #aaa; }
 </style>
 </head>
 
@@ -137,6 +124,7 @@ small {
         <h1>GAMERS-NODE</h1>
         <span>SUPER ADMIN CONTROL CENTER</span>
     </div>
+
     <button id="logoutBtn" class="logout" style="display:none">
         Logout
     </button>
@@ -344,6 +332,7 @@ small {
 </div>
 
 <script>
+
 // =====================================
 // SUPABASE CONFIGURATION
 // =====================================
@@ -351,10 +340,8 @@ small {
 const SUPABASE_URL =
 "https://zptxyfqqqnxktquvkrk.supabase.co";
 
-// Replace this placeholder with your
-// own sb_publishable_ key.
-
-const SUPABASE_KEY = "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
+const SUPABASE_KEY =
+"sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
 const db = window.supabase.createClient(
     SUPABASE_URL,
@@ -385,26 +372,51 @@ function showDashboardMessage(text) {
 
 async function checkAdmin() {
 
+    showMessage("Checking administrator access...");
+
     const { data: { user }, error } =
         await db.auth.getUser();
 
-    if (error || !user) {
+    if (error) {
+        showLogin();
+        showMessage("LOGIN CHECK ERROR: " + error.message);
+        return;
+    }
+
+    if (!user) {
         showLogin();
         return;
     }
 
+    // Check administrator status in Supabase
     const { data, error: adminError } =
         await db.rpc("is_admin");
 
-    if (adminError || data !== true) {
+    // SHOW THE REAL RPC ERROR
+    if (adminError) {
         showLogin();
+
         showMessage(
-            "Access denied. Your account is not an administrator."
+            "RPC ERROR: " + adminError.message
         );
-        await db.auth.signOut();
+
         return;
     }
 
+    // SHOW THE ACTUAL RESULT
+    if (data !== true) {
+        showLogin();
+
+        showMessage(
+            "ADMIN CHECK RESULT: " +
+            JSON.stringify(data) +
+            " | TYPE: " + typeof data
+        );
+
+        return;
+    }
+
+    // ACCESS GRANTED
     loginSection.style.display = "none";
     dashboard.style.display = "block";
     logoutBtn.style.display = "block";
@@ -412,7 +424,9 @@ async function checkAdmin() {
     document.getElementById("adminEmail").textContent =
         "Signed in as: " + user.email;
 
-    loadDashboard();
+    showMessage("");
+
+    await loadDashboard();
 }
 
 function showLogin() {
@@ -421,6 +435,10 @@ function showLogin() {
     logoutBtn.style.display = "none";
 }
 
+// =====================================
+// LOGIN FORM
+// =====================================
+
 document.getElementById("loginForm")
 .addEventListener("submit", async function(e) {
 
@@ -428,8 +446,11 @@ document.getElementById("loginForm")
 
     showMessage("Signing in...");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email =
+        document.getElementById("email").value.trim();
+
+    const password =
+        document.getElementById("password").value;
 
     const { error } = await db.auth.signInWithPassword({
         email,
@@ -437,23 +458,36 @@ document.getElementById("loginForm")
     });
 
     if (error) {
-        showMessage(error.message);
+        showMessage("LOGIN ERROR: " + error.message);
         return;
     }
 
     await checkAdmin();
 });
 
+// =====================================
+// LOGOUT
+// =====================================
+
 logoutBtn.addEventListener("click", async function() {
-    await db.auth.signOut();
+
+    const { error } = await db.auth.signOut();
+
+    if (error) {
+        showDashboardMessage(error.message);
+        return;
+    }
+
     showLogin();
     showMessage("You have logged out.");
 });
 
-db.auth.onAuthStateChange((event, session) => {
+db.auth.onAuthStateChange((event) => {
+
     if (event === "SIGNED_OUT") {
         showLogin();
     }
+
 });
 
 // =====================================
@@ -500,7 +534,7 @@ document.getElementById("playerForm")
 
     showDashboardMessage("Player registered successfully!");
 
-    loadPlayers();
+    await loadPlayers();
 });
 
 // =====================================
@@ -592,7 +626,7 @@ document.getElementById("tournamentForm")
 
     showDashboardMessage("Tournament created successfully!");
 
-    loadTournaments();
+    await loadTournaments();
 });
 
 // =====================================
@@ -623,11 +657,17 @@ async function loadTournaments() {
 
         const row = document.createElement("tr");
 
-        [t.name, t.season || "-", t.status, t.start_date || "-"]
-        .forEach(value => {
+        [
+            t.name,
+            t.season || "-",
+            t.status,
+            t.start_date || "-"
+        ].forEach(value => {
+
             const cell = document.createElement("td");
             cell.textContent = value;
             row.appendChild(cell);
+
         });
 
         table.appendChild(row);
@@ -701,7 +741,7 @@ document.getElementById("matchForm")
 
     showDashboardMessage("Match result saved successfully!");
 
-    loadStandings();
+    await loadStandings();
 });
 
 // =====================================
