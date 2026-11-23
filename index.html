@@ -1,832 +1,669 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Gamers-Node | Level Up</title>
-<meta name="description" content="Join Gamers-Node to connect with gamers, discover games and level up together.">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="bot.css">
-
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    background: #090711;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-}
-
-header {
-    padding: 20px 7%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    background: #100b1c;
-    border-bottom: 1px solid #39205c;
-}
-
-.logo {
-    color: #c084fc;
-    font-size: 23px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    text-shadow: 0 0 14px #9333ea;
-}
-
-nav a {
-    color: #eee5ff;
-    text-decoration: none;
-    margin-left: 18px;
-    font-size: 14px;
-}
-
-nav a:hover {
-    color: #d8b4fe;
-}
-
-.hero {
-    min-height: 520px;
-    padding: 90px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background:
-        radial-gradient(ellipse at 50% 20%, #39135c 0%, transparent 55%),
-        #090711;
-}
-
-.tag {
-    color: #d8b4fe;
-    border: 1px solid #8545bb;
-    border-radius: 30px;
-    padding: 7px 16px;
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-bottom: 24px;
-}
-
-h1 {
-    font-size: clamp(38px, 8vw, 70px);
-    line-height: 1.1;
-    margin-bottom: 22px;
-}
-
-h1 span {
-    color: #c084fc;
-    text-shadow: 0 0 25px #9333ea;
-}
-
-.hero p {
-    max-width: 580px;
-    color: #c9c4d5;
-    margin-bottom: 30px;
-}
-
-.btn {
-    display: inline-block;
-    padding: 14px 25px;
-    background: #9333ea;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 9px;
-    box-shadow: 0 0 20px #7e22ce66;
-    transition: transform .2s, box-shadow .2s;
-}
-
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 28px #a855f7;
-}
-
-.section {
-    padding: 65px 7%;
-    text-align: center;
-}
-
-.section h2 {
-    font-size: 30px;
-    margin-bottom: 10px;
-}
-
-.section-intro {
-    color: #aaa3bd;
-    margin-bottom: 32px;
-}
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 20px;
-    max-width: 1050px;
-    margin: auto;
-}
-
-.card {
-    padding: 28px 20px;
-    background: #151020;
-    border: 1px solid #39234e;
-    border-radius: 14px;
-    transition: transform .2s, border-color .2s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    border-color: #b46cff;
-}
-
-.card .emoji {
-    font-size: 38px;
-    margin-bottom: 12px;
-}
-
-.card h3 {
-    color: #d8b4fe;
-    margin-bottom: 8px;
-}
-
-.card p {
-    color: #bcb5cb;
-    font-size: 14px;
-}
-
-.join {
-    background: linear-gradient(180deg, #090711, #1a0d2b);
-}
-
-footer {
-    text-align: center;
-    padding: 25px 15px;
-    color: #9990aa;
-    font-size: 13px;
-    border-top: 1px solid #30203f;
-}
-
-/* PUBLIC TABLES */
-
-.public-table-section {
-    padding: 45px 7%;
-    text-align: center;
-}
-
-.public-table-section h2 {
-    color: #c084fc;
-    font-size: 30px;
-    margin-bottom: 10px;
-}
-
-.public-table-wrapper {
-    max-width: 1100px;
-    margin: auto;
-    overflow-x: auto;
-    background: #151020;
-    border: 1px solid #39234e;
-    border-radius: 14px;
-}
-
-.public-table {
-    width: 100%;
-    min-width: 600px;
-    border-collapse: collapse;
-}
-
-.public-table th,
-.public-table td {
-    border: 1px solid #39234e;
-    padding: 14px;
-    text-align: left;
-}
-
-.public-table th {
-    background: #241438;
-    color: #c084fc;
-}
-
-.public-table td {
-    color: #eee5ff;
-}
-
-.public-table tbody tr:hover {
-    background: #1e1530;
-}
-
-.public-status {
-    text-transform: capitalize;
-}
-
-.public-empty {
-    text-align: center !important;
-    color: #aaa3bd !important;
-}
-
-/* SEPARATE TOURNAMENT STANDINGS */
-
-.standings-tournament {
-    max-width: 1100px;
-    margin: 0 auto 35px;
-}
-
-.standings-tournament h3 {
-    color: #d8b4fe;
-    font-size: 23px;
-    margin-bottom: 15px;
-    text-align: left;
-    padding-left: 5px;
-    text-shadow: 0 0 12px #9333ea55;
-}
-
-.standings-tournament .public-table-wrapper {
-    box-shadow: 0 0 18px #9333ea18;
-}
-
-.standings-tournament:last-child {
-    margin-bottom: 0;
-}
-
-/* JOIN SECTION */
-
-.join {
-    background: linear-gradient(180deg, #090711, #1a0d2b);
-}
-
-/* ANNOUNCEMENT STYLES */
-
-.announcement-section {
-    padding: 45px 7%;
-    background: #0d0916;
-    text-align: center;
-}
-
-.announcement-section h2 {
-    color: #c084fc;
-    font-size: 28px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 15px #9333ea;
-}
-
-.announcement-card {
-    max-width: 900px;
-    margin: auto;
-    padding: 25px;
-    text-align: left;
-    background: #151020;
-    border: 1px solid #8545bb;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #9333ea33;
-}
-
-.announcement-card h3 {
-    color: #d8b4fe;
-    margin-bottom: 12px;
-}
-
-.announcement-card p {
-    color: #c9c4d5;
-    margin-bottom: 15px;
-}
-
-.announcement-label {
-    display: inline-block;
-    padding: 5px 12px;
-    margin-bottom: 15px;
-    background: #351653;
-    border: 1px solid #8545bb;
-    border-radius: 20px;
-    color: #e9d5ff;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-/* CHATBOT BUTTON AND POPUP STYLES ARE IN bot.css */
-
-@media (max-width: 600px) {
-
-    header {
-        flex-direction: column;
-    }
-
-    nav a {
-        margin: 0 8px;
-    }
-
-    .hero {
-        min-height: 460px;
-        padding: 65px 20px;
-    }
-
-    .section {
-        padding: 45px 20px;
-    }
-
-    .public-table-section {
-        padding: 45px 15px;
-    }
-
-    .public-table th,
-    .public-table td {
-        padding: 10px;
-    }
-
-    .standings-tournament h3 {
-        font-size: 20px;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<!-- GAMERS-NODE CHATBOT -->
-
-<button id="gn-chat-toggle" type="button">
-    🎮 Chat with us
-</button>
-
-<section id="gn-chat" aria-label="Gamers-Node chatbot">
-
-    <div class="gn-chat-header">
-        <span>💜 Gamers-Node Bot</span>
-        <button id="gn-chat-close" type="button" aria-label="Close chat">×</button>
-    </div>
-
-    <div id="gn-chat-messages" aria-live="polite">
-        <div class="gn-message gn-bot-message">
-            Hey gamer! 🎮 Welcome to Gamers-Node!
-            Ask me about joining, games, or tournaments.
-        </div>
-    </div>
-
-    <form id="gn-chat-form">
-        <input
-            id="gn-chat-input"
-            type="text"
-            placeholder="Ask me something..."
-            maxlength="300"
-            autocomplete="off"
-            required
-        >
-        <button type="submit">Send</button>
-    </form>
-
-</section>
-
-<!-- HEADER -->
-
-<header>
-
-    <div class="logo">🎮 GAMERS-NODE</div>
-
-    <nav>
-        <a href="#games">Games</a>
-        <a href="#registered-players">Players</a>
-        <a href="#public-tournaments">Tournaments</a>
-        <a href="#public-standings">Standings</a>
-        <a href="#community">Join</a>
-    </nav>
-
-</header>
-
-<main>
-
-<!-- HERO -->
-
-<section class="hero">
-
-    <div class="tag">YOUR GAME. YOUR COMMUNITY.</div>
-
-    <h1>READY TO <span>LEVEL UP?</span></h1>
-
-    <p>
-        Meet fellow gamers, discover your next challenge,
-        showcase your talent, and grow with the Gamers-Node community.
-    </p>
-
-    <a class="btn" href="register.html">JOIN THE COMMUNITY ↗️</a>
-
-</section>
-
-<!-- GAMES -->
-
-<section class="section" id="games">
-
-    <h2>ENTER YOUR GAMING WORLD</h2>
-
-    <p class="section-intro">
-        Whatever you play, there's a place for you here.
-    </p>
-
-    <div class="cards">
-
-        <article class="card">
-            <div class="emoji">📱</div>
-            <h3>Mobile Gaming</h3>
-            <p>Connect with mobile gamers and share your favourite games.</p>
-        </article>
-
-        <article class="card">
-            <div class="emoji">🖥️</div>
-            <h3>PC Gaming</h3>
-            <p>Explore PC gaming, exchange tips, and find gaming friends.</p>
-        </article>
-
-        <article class="card">
-            <div class="emoji">🏆</div>
-            <h3>Competitive Play</h3>
-            <p>Celebrate your skills and discover future tournament opportunities.</p>
-        </article>
-
-    </div>
-
-</section>
-
-<!-- REGISTERED PLAYERS -->
-
-<section class="section" id="registered-players">
-
-    <h2>🏆 REGISTERED PLAYERS</h2>
-
-    <p class="section-intro">
-        Meet the gamers in our community.
-    </p>
-
-    <div class="cards" id="publicPlayers">
-
-        <article class="card">
-            <p>Loading registered players...</p>
-        </article>
-
-    </div>
-
-</section>
-
-<!-- PUBLIC TOURNAMENTS -->
-
-<section class="public-table-section" id="public-tournaments">
-
-    <h2>🏆 TOURNAMENTS</h2>
-
-    <p class="section-intro">
-        Discover current and upcoming Gamers-Node tournaments.
-    </p>
-
-    <div class="public-table-wrapper">
-
-        <table class="public-table">
-
-            <thead>
-                <tr>
-                    <th>Tournament</th>
-                    <th>Season</th>
-                    <th>Status</th>
-                    <th>Start Date</th>
-                </tr>
-            </thead>
-
-            <tbody id="publicTournaments">
-
-                <tr>
-                    <td colspan="4" class="public-empty">
-                        Loading tournaments...
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-<!-- PUBLIC LEAGUE STANDINGS -->
-
-<section class="public-table-section" id="public-standings">
-
-    <h2>🥇 LEAGUE STANDINGS</h2>
-
-    <p class="section-intro">
-        Follow player performance and league progress.
-    </p>
-
-    <!-- EACH TOURNAMENT WILL HAVE ITS OWN TABLE -->
-
-    <div id="publicStandingsGroups">
-
-        <div class="public-table-wrapper">
-            <table class="public-table">
-                <tbody>
-                    <tr>
-                        <td class="public-empty">
-                            Loading standings...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-</section>
-
-<!-- JOIN COMMUNITY -->
-
-<section class="section join" id="community">
-
-    <h2>YOUR NEXT LEVEL STARTS HERE</h2>
-
-    <p class="section-intro">
-        Connect. Compete. Grow. Be part of the community.
-    </p>
-
-    <a class="btn" href="register.html">GET STARTED NOW</a>
-
-</section>
-
-</main>
-
-<!-- FOOTER -->
-
-<footer>
-    © 2026 Gamers-Node. Built for gamers, powered by community. 💜
-</footer>
-
-<!-- CHATBOT SCRIPT -->
-
-<script src="bots.js"></script>
-
-<!-- SUPABASE PUBLIC DATA -->
-
-<script>
-
-const PUBLIC_SUPABASE_URL =
-    "https://zptxyfqqgxnxktquvkrk.supabase.co";
-
-const PUBLIC_SUPABASE_KEY =
-    "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk_8_mVbP";
-
-const publicDB = window.supabase.createClient(
-    PUBLIC_SUPABASE_URL,
-    PUBLIC_SUPABASE_KEY
-);
-
-function escapePlayerName(value) {
-    const div = document.createElement("div");
-    div.textContent = value ?? "";
-    return div.innerHTML;
-}
-
-function publicFormatDate(value) {
-
-    if (!value) return "—";
-
-    const date = new Date(value);
-
-    return Number.isNaN(date.getTime())
-        ? "—"
-        : date.toLocaleDateString();
-}
-
-/* LOAD REGISTERED PLAYERS */
-
-async function loadPublicPlayers() {
-
-    const container = document.getElementById("publicPlayers");
-
-    const { data, error } = await publicDB
-        .from("players")
-        .select("display_name, is_active, created_at")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
-
-    if (error) {
-
-        container.innerHTML = `
-            <article class="card">
-                <p>Unable to load players right now.</p>
-            </article>
-        `;
-
-        console.error("Players error:", error);
-        return;
-    }
-
-    if (!data || data.length === 0) {
-
-        container.innerHTML = `
-            <article class="card">
-                <p>No registered players yet.</p>
-            </article>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = data.map(player => `
-        <article class="card">
-            <div class="emoji">🎮</div>
-            <h3>${escapePlayerName(player.display_name)}</h3>
-            <p>Gamers-Node Member</p>
-        </article>
-    `).join("");
-}
-
-/* LOAD TOURNAMENTS */
-
-async function loadPublicTournaments() {
-
-    const table = document.getElementById("publicTournaments");
-
-    const { data, error } = await publicDB
-        .from("tournaments")
-        .select("name, season, status, start_date, created_at")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="4" class="public-empty">
-                    Unable to load tournaments.
-                </td>
-            </tr>
-        `;
-
-        console.error("Tournament error:", error);
-        return;
-    }
-
-    if (!data || data.length === 0) {
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="4" class="public-empty">
-                    No tournaments available yet.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    table.innerHTML = data.map(tournament => `
-        <tr>
-            <td>${escapePlayerName(tournament.name)}</td>
-            <td>${escapePlayerName(tournament.season || "—")}</td>
-            <td class="public-status">${escapePlayerName(tournament.status || "—")}</td>
-            <td>${publicFormatDate(tournament.start_date)}</td>
-        </tr>
-    `).join("");
-}
-
-/* LOAD SEPARATE LEAGUE STANDINGS */
-
-async function loadPublicStandings() {
-
-    const container = document.getElementById("publicStandingsGroups");
-
-    const { data, error } = await publicDB
-        .from("league_standings")
-        .select("*");
-
-    if (error) {
-
-        console.error("Standings error:", error);
-
-        container.innerHTML = `
-            <div class="public-table-wrapper">
-                <table class="public-table">
-                    <tbody>
-                        <tr>
-                            <td class="public-empty">
-                                Unable to load standings.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-        return;
-    }
-
-    if (!data || data.length === 0) {
-
-        container.innerHTML = `
-            <div class="public-table-wrapper">
-                <table class="public-table">
-                    <tbody>
-                        <tr>
-                            <td class="public-empty">
-                                No standings available yet.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-        return;
-    }
-
-    /* GROUP PLAYERS BY TOURNAMENT NAME */
-
-    const tournamentGroups = {};
-
-    data.forEach(player => {
-
-        const tournamentName =
-            player.tournament_name || "Unassigned Tournament";
-
-        if (!tournamentGroups[tournamentName]) {
-            tournamentGroups[tournamentName] = [];
-        }
-
-        tournamentGroups[tournamentName].push(player);
-
-    });
-
-    /* CREATE A SEPARATE TABLE FOR EACH TOURNAMENT */
-
-    container.innerHTML = Object.entries(tournamentGroups)
-        .map(([tournamentName, players]) => {
-
-            const rows = players.map(player => `
-                <tr>
-                    <td>${escapePlayerName(player.player_name)}</td>
-                    <td>${player.mp ?? 0}</td>
-                    <td>${player.w ?? 0}</td>
-                    <td>${player.d ?? 0}</td>
-                    <td>${player.l ?? 0}</td>
-                    <td>${player.pts ?? 0}</td>
-                </tr>
-            `).join("");
-
-            return `
-                <div class="standings-tournament">
-
-                    <h3>🏆 ${escapePlayerName(tournamentName)}</h3>
-
-                    <div class="public-table-wrapper">
-
-                        <table class="public-table">
-
-                            <thead>
-                                <tr>
-                                    <th>Player</th>
-                                    <th>Played</th>
-                                    <th>Won</th>
-                                    <th>Drawn</th>
-                                    <th>Lost</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                ${rows}
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
-
-}
-
-/* LOAD ALL PUBLIC DATA */
-
-async function loadPublicData() {
-
-    await Promise.all([
-        loadPublicPlayers(),
-        loadPublicTournaments(),
-        loadPublicStandings()
-    ]);
-
-}
-
-loadPublicData();
-
-</script>
-
-</body>
-</html>
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Gamers-Node | Level Up</title>  
+<meta name="description" content="Join Gamers-Node to connect with gamers, discover games and level up together.">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <link rel="stylesheet" href="bot.css">  <style>  
+* {  
+    box-sizing: border-box;  
+    margin: 0;  
+    padding: 0;  
+}  
+  
+html {  
+    scroll-behavior: smooth;  
+}  
+  
+body {  
+    background: #090711;  
+    color: #fff;  
+    font-family: Arial, sans-serif;  
+    line-height: 1.6;  
+}  
+  
+header {  
+    padding: 20px 7%;  
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between;  
+    gap: 15px;  
+    background: #100b1c;  
+    border-bottom: 1px solid #39205c;  
+}  
+  
+.logo {  
+    color: #c084fc;  
+    font-size: 23px;  
+    font-weight: 900;  
+    letter-spacing: 1px;  
+    text-shadow: 0 0 14px #9333ea;  
+}  
+  
+nav a {  
+    color: #eee5ff;  
+    text-decoration: none;  
+    margin-left: 18px;  
+    font-size: 14px;  
+}  
+  
+nav a:hover {  
+    color: #d8b4fe;  
+}  
+  
+.hero {  
+    min-height: 520px;  
+    padding: 90px 20px;  
+    display: flex;  
+    flex-direction: column;  
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;  
+    background:  
+        radial-gradient(ellipse at 50% 20%, #39135c 0%, transparent 55%),  
+        #090711;  
+}  
+  
+.tag {  
+    color: #d8b4fe;  
+    border: 1px solid #8545bb;  
+    border-radius: 30px;  
+    padding: 7px 16px;  
+    font-size: 12px;  
+    letter-spacing: 2px;  
+    margin-bottom: 24px;  
+}  
+  
+h1 {  
+    font-size: clamp(38px, 8vw, 70px);  
+    line-height: 1.1;  
+    margin-bottom: 22px;  
+}  
+  
+h1 span {  
+    color: #c084fc;  
+    text-shadow: 0 0 25px #9333ea;  
+}  
+  
+.hero p {  
+    max-width: 580px;  
+    color: #c9c4d5;  
+    margin-bottom: 30px;  
+}  
+  
+.btn {  
+    display: inline-block;  
+    padding: 14px 25px;  
+    background: #9333ea;  
+    color: white;  
+    text-decoration: none;  
+    font-weight: bold;  
+    border-radius: 9px;  
+    box-shadow: 0 0 20px #7e22ce66;  
+    transition: transform .2s, box-shadow .2s;  
+}  
+  
+.btn:hover {  
+    transform: translateY(-3px);  
+    box-shadow: 0 0 28px #a855f7;  
+}  
+  
+.section {  
+    padding: 65px 7%;  
+    text-align: center;  
+}  
+  
+.section h2 {  
+    font-size: 30px;  
+    margin-bottom: 10px;  
+}  
+  
+.section-intro {  
+    color: #aaa3bd;  
+    margin-bottom: 32px;  
+}  
+  
+.cards {  
+    display: grid;  
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));  
+    gap: 20px;  
+    max-width: 1050px;  
+    margin: auto;  
+}  
+  
+.card {  
+    padding: 28px 20px;  
+    background: #151020;  
+    border: 1px solid #39234e;  
+    border-radius: 14px;  
+    transition: transform .2s, border-color .2s;  
+}  
+  
+.card:hover {  
+    transform: translateY(-5px);  
+    border-color: #b46cff;  
+}  
+  
+.card .emoji {  
+    font-size: 38px;  
+    margin-bottom: 12px;  
+}  
+  
+.card h3 {  
+    color: #d8b4fe;  
+    margin-bottom: 8px;  
+}  
+  
+.card p {  
+    color: #bcb5cb;  
+    font-size: 14px;  
+}  
+  
+.join {  
+    background: linear-gradient(180deg, #090711, #1a0d2b);  
+}  
+  
+footer {  
+    text-align: center;  
+    padding: 25px 15px;  
+    color: #9990aa;  
+    font-size: 13px;  
+    border-top: 1px solid #30203f;  
+}  
+  
+/* PUBLIC TABLES */  
+  
+.public-table-section {  
+    padding: 45px 7%;  
+    text-align: center;  
+}  
+  
+.public-table-section h2 {  
+    color: #c084fc;  
+    font-size: 30px;  
+    margin-bottom: 10px;  
+}  
+  
+.public-table-wrapper {  
+    max-width: 1100px;  
+    margin: auto;  
+    overflow-x: auto;  
+    background: #151020;  
+    border: 1px solid #39234e;  
+    border-radius: 14px;  
+}  
+  
+.public-table {  
+    width: 100%;  
+    min-width: 600px;  
+    border-collapse: collapse;  
+}  
+  
+.public-table th,  
+.public-table td {  
+    border: 1px solid #39234e;  
+    padding: 14px;  
+    text-align: left;  
+}  
+  
+.public-table th {  
+    background: #241438;  
+    color: #c084fc;  
+}  
+  
+.public-table td {  
+    color: #eee5ff;  
+}  
+  
+.public-table tbody tr:hover {  
+    background: #1e1530;  
+}  
+  
+.public-status {  
+    text-transform: capitalize;  
+}  
+  
+.public-empty {  
+    text-align: center !important;  
+    color: #aaa3bd !important;  
+}  
+  
+/* JOIN SECTION */  
+  
+.join {  
+    background: linear-gradient(180deg, #090711, #1a0d2b);  
+}  
+  
+/* ANNOUNCEMENT STYLES */  
+  
+.announcement-section {  
+    padding: 45px 7%;  
+    background: #0d0916;  
+    text-align: center;  
+}  
+  
+.announcement-section h2 {  
+    color: #c084fc;  
+    font-size: 28px;  
+    margin-bottom: 10px;  
+    text-shadow: 0 0 15px #9333ea;  
+}  
+  
+.announcement-card {  
+    max-width: 900px;  
+    margin: auto;  
+    padding: 25px;  
+    text-align: left;  
+    background: #151020;  
+    border: 1px solid #8545bb;  
+    border-radius: 15px;  
+    box-shadow: 0 0 20px #9333ea33;  
+}  
+  
+.announcement-card h3 {  
+    color: #d8b4fe;  
+    margin-bottom: 12px;  
+}  
+  
+.announcement-card p {  
+    color: #c9c4d5;  
+    margin-bottom: 15px;  
+}  
+  
+.announcement-label {  
+    display: inline-block;  
+    padding: 5px 12px;  
+    margin-bottom: 15px;  
+    background: #351653;  
+    border: 1px solid #8545bb;  
+    border-radius: 20px;  
+    color: #e9d5ff;  
+    font-size: 12px;  
+    font-weight: bold;  
+    letter-spacing: 1px;  
+}  
+  
+/* CHATBOT BUTTON AND POPUP STYLES ARE IN bot.css */  
+  
+@media (max-width: 600px) {  
+    header {  
+        flex-direction: column;  
+    }  
+  
+    nav a {  
+        margin: 0 8px;  
+    }  
+  
+    .hero {  
+        min-height: 460px;  
+        padding: 65px 20px;  
+    }  
+  
+    .section {  
+        padding: 45px 20px;  
+    }  
+  
+    .public-table-section {  
+        padding: 45px 15px;  
+    }  
+  
+    .public-table th,  
+    .public-table td {  
+        padding: 10px;  
+    }  
+}  
+</style>  </head>  <body>  <!-- GAMERS-NODE CHATBOT -->  <button id="gn-chat-toggle" type="button">  
+    🎮 Chat with us  
+</button>  <section id="gn-chat" aria-label="Gamers-Node chatbot">  <div class="gn-chat-header">  
+    <span>💜 Gamers-Node Bot</span>  
+    <button id="gn-chat-close" type="button" aria-label="Close chat">×</button>  
+</div>  
+
+<div id="gn-chat-messages" aria-live="polite">  
+    <div class="gn-message gn-bot-message">  
+        Hey gamer! 🎮 Welcome to Gamers-Node!  
+        Ask me about joining, games, or tournaments.  
+    </div>  
+</div>  
+
+<form id="gn-chat-form">  
+    <input  
+        id="gn-chat-input"  
+        type="text"  
+        placeholder="Ask me something..."  
+        maxlength="300"  
+        autocomplete="off"  
+        required  
+    >  
+    <button type="submit">Send</button>  
+</form>
+
+</section>  <!-- HEADER -->  <header>  <div class="logo">🎮 GAMERS-NODE</div>  
+
+<nav>  
+    <a href="#games">Games</a>  
+    <a href="#registered-players">Players</a>  
+    <a href="#public-tournaments">Tournaments</a>  
+    <a href="#public-standings">Standings</a>  
+    <a href="#community">Join</a>  
+</nav>
+
+</header>  <main>  <!-- HERO -->  <section class="hero">  <div class="tag">YOUR GAME. YOUR COMMUNITY.</div>  
+
+<h1>READY TO <span>LEVEL UP?</span></h1>  
+
+<p>  
+    Meet fellow gamers, discover your next challenge,  
+    showcase your talent, and grow with the Gamers-Node community.  
+</p>  
+
+<a class="btn" href="register.html">JOIN THE COMMUNITY ↗️</a>
+
+</section>  <!-- GAMES -->  <section class="section" id="games">  <h2>ENTER YOUR GAMING WORLD</h2>  
+
+<p class="section-intro">  
+    Whatever you play, there's a place for you here.  
+</p>  
+
+<div class="cards">  
+
+    <article class="card">  
+        <div class="emoji">📱</div>  
+        <h3>Mobile Gaming</h3>  
+        <p>Connect with mobile gamers and share your favourite games.</p>  
+    </article>  
+
+    <article class="card">  
+        <div class="emoji">🖥️</div>  
+        <h3>PC Gaming</h3>  
+        <p>Explore PC gaming, exchange tips, and find gaming friends.</p>  
+    </article>  
+
+    <article class="card">  
+        <div class="emoji">🏆</div>  
+        <h3>Competitive Play</h3>  
+        <p>Celebrate your skills and discover future tournament opportunities.</p>  
+    </article>  
+
+</div>
+
+</section>  <!-- REGISTERED PLAYERS -->  <section class="section" id="registered-players">  <h2>🏆 REGISTERED PLAYERS</h2>  
+
+<p class="section-intro">  
+    Meet the gamers in our community.  
+</p>  
+
+<div class="cards" id="publicPlayers">  
+
+    <article class="card">  
+        <p>Loading registered players...</p>  
+    </article>  
+
+</div>
+
+</section>  <!-- PUBLIC TOURNAMENTS -->  <section class="public-table-section" id="public-tournaments">  <h2>🏆 TOURNAMENTS</h2>  
+
+<p class="section-intro">  
+    Discover current and upcoming Gamers-Node tournaments.  
+</p>  
+
+<div class="public-table-wrapper">  
+
+    <table class="public-table">  
+
+        <thead>  
+            <tr>  
+                <th>Tournament</th>  
+                <th>Season</th>  
+                <th>Status</th>  
+                <th>Start Date</th>  
+            </tr>  
+        </thead>  
+
+        <tbody id="publicTournaments">  
+
+            <tr>  
+                <td colspan="4" class="public-empty">  
+                    Loading tournaments...  
+                </td>  
+            </tr>  
+
+        </tbody>  
+
+    </table>  
+
+</div>
+
+</section>  <!-- PUBLIC LEAGUE STANDINGS -->  <section class="public-table-section" id="public-standings">  <h2>🥇 LEAGUE STANDINGS</h2>  
+
+<p class="section-intro">  
+    Follow player performance and league progress.  
+</p>  
+
+<div class="public-table-wrapper">  
+
+    <table class="public-table">  
+
+        <thead>  
+            <tr>  
+                <th>Player</th>  
+                <th>Played</th>  
+                <th>Won</th>  
+                <th>Drawn</th>  
+                <th>Lost</th>  
+                <th>Points</th>  
+            </tr>  
+        </thead>  
+
+        <tbody id="publicStandings">  
+
+            <tr>  
+                <td colspan="6" class="public-empty">  
+                    Loading standings...  
+                </td>  
+            </tr>  
+
+        </tbody>  
+
+    </table>  
+
+</div>
+
+</section>  <!-- JOIN COMMUNITY -->  <section class="section join" id="community">  <h2>YOUR NEXT LEVEL STARTS HERE</h2>  
+
+<p class="section-intro">  
+    Connect. Compete. Grow. Be part of the community.  
+</p>  
+
+<a class="btn" href="register.html">GET STARTED NOW</a>
+
+</section>  </main>  <!-- FOOTER -->  <footer>  
+    © 2026 Gamers-Node. Built for gamers, powered by community. 💜  
+</footer>  <!-- CHATBOT SCRIPT -->  <script src="bots.js"></script>  <!-- SUPABASE PUBLIC DATA -->  <script>  
+const PUBLIC_SUPABASE_URL =  
+    "https://zptxyfqqgxnxktquvkrk.supabase.co";  
+  
+const PUBLIC_SUPABASE_KEY =  
+    "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";  
+  
+const publicDB = window.supabase.createClient(  
+    PUBLIC_SUPABASE_URL,  
+    PUBLIC_SUPABASE_KEY  
+);  
+  
+function escapePlayerName(value) {  
+    const div = document.createElement("div");  
+    div.textContent = value ?? "";  
+    return div.innerHTML;  
+}  
+  
+function publicFormatDate(value) {  
+    if (!value) return "—";  
+  
+    const date = new Date(value);  
+  
+    return Number.isNaN(date.getTime())  
+        ? "—"  
+        : date.toLocaleDateString();  
+}  
+  
+/* LOAD REGISTERED PLAYERS */  
+  
+async function loadPublicPlayers() {  
+  
+    const container = document.getElementById("publicPlayers");  
+  
+    const { data, error } = await publicDB  
+        .from("players")  
+        .select("display_name, is_active, created_at")  
+        .eq("is_active", true)  
+        .order("created_at", { ascending: false });  
+  
+    if (error) {  
+  
+        container.innerHTML = `  
+            <article class="card">  
+                <p>Unable to load players right now.</p>  
+            </article>  
+        `;  
+  
+        console.error("Players error:", error);  
+        return;  
+    }  
+  
+    if (!data || data.length === 0) {  
+  
+        container.innerHTML = `  
+            <article class="card">  
+                <p>No registered players yet.</p>  
+            </article>  
+        `;  
+  
+        return;  
+    }  
+  
+    container.innerHTML = data.map(player => `  
+        <article class="card">  
+            <div class="emoji">🎮</div>  
+            <h3>${escapePlayerName(player.display_name)}</h3>  
+            <p>Gamers-Node Member</p>  
+        </article>  
+    `).join("");  
+}  
+  
+/* LOAD TOURNAMENTS */  
+  
+async function loadPublicTournaments() {  
+  
+    const table = document.getElementById("publicTournaments");  
+  
+    const { data, error } = await publicDB  
+        .from("tournaments")  
+        .select("name, season, status, start_date, created_at")  
+        .order("created_at", { ascending: false });  
+  
+    if (error) {  
+  
+        table.innerHTML = `  
+            <tr>  
+                <td colspan="4" class="public-empty">  
+                    Unable to load tournaments.  
+                </td>  
+            </tr>  
+        `;  
+  
+        console.error("Tournament error:", error);  
+        return;  
+    }  
+  
+    if (!data || data.length === 0) {  
+  
+        table.innerHTML = `  
+            <tr>  
+                <td colspan="4" class="public-empty">  
+                    No tournaments available yet.  
+                </td>  
+            </tr>  
+        `;  
+  
+        return;  
+    }  
+  
+    table.innerHTML = data.map(tournament => `  
+        <tr>  
+            <td>${escapePlayerName(tournament.name)}</td>  
+            <td>${escapePlayerName(tournament.season || "—")}</td>  
+            <td class="public-status">${escapePlayerName(tournament.status || "—")}</td>  
+            <td>${publicFormatDate(tournament.start_date)}</td>  
+        </tr>  
+    `).join("");  
+}  
+  
+/* LOAD LEAGUE STANDINGS */  
+  
+async function loadPublicStandings() {  
+  
+    const table = document.getElementById("publicStandings");  
+  
+    const { data, error } = await publicDB  
+        .from("league_standings")  
+        .select("*");  
+  
+    if (error) {  
+  
+        console.error("Standings error:", error);  
+  
+        table.innerHTML = `  
+            <tr>  
+                <td colspan="6" class="public-empty">  
+                    Unable to load standings.  
+                </td>  
+            </tr>  
+        `;  
+  
+        return;  
+    }  
+  
+    if (!data || data.length === 0) {  
+  
+        table.innerHTML = `  
+            <tr>  
+                <td colspan="6" class="public-empty">  
+                    No standings available yet.  
+                </td>  
+            </tr>  
+        `;  
+  
+        return;  
+    }  
+  
+    table.innerHTML = data.map(player => `  
+        <tr>  
+            <td>  
+                ${escapePlayerName(player.player_name)}  
+                <small style="display:block;color:#bba5ff;">  
+                    ${escapePlayerName(player.tournament_name)}  
+                </small>  
+            </td>  
+            <td>${player.mp ?? 0}</td>  
+            <td>${player.w ?? 0}</td>  
+            <td>${player.d ?? 0}</td>  
+            <td>${player.l ?? 0}</td>  
+            <td>${player.pts ?? 0}</td>  
+        </tr>  
+    `).join("");  
+}  
+  
+/* LOAD ALL PUBLIC DATA */  
+  
+async function loadPublicData() {  
+  
+    await Promise.all([  
+        loadPublicPlayers(),  
+        loadPublicTournaments(),  
+        loadPublicStandings()  
+    ]);  
+  
+}  
+  
+loadPublicData();  
+</script>  </body>  
+    </html>  
