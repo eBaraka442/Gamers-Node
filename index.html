@@ -417,6 +417,22 @@
       </div>
     </section>
 
+    
+<!-- GAMERS-NODE LIVE REGISTERED PLAYERS -->
+
+<section class="section" id="registered-players">
+  <h2>🏆 REGISTERED PLAYERS</h2>
+  <p class="section-intro">
+    Meet the gamers in our community.
+  </p>
+
+  <div class="cards" id="publicPlayers">
+    <article class="card">
+      <p>Loading registered players...</p>
+    </article>
+  </div>
+</section>
+
     <section class="section join" id="community">
       <h2>YOUR NEXT LEVEL STARTS HERE</h2>
       <p class="section-intro">
@@ -434,6 +450,57 @@
 <script src="bots.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    
+<script>
+const PUBLIC_SUPABASE_URL =
+  "https://zptxyfqqgxnxktquvkrk.supabase.co";
+
+const PUBLIC_SUPABASE_KEY =
+  "YOUR_EXISTING_PUBLISHABLE_KEY";
+
+const publicDB = window.supabase.createClient(
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_KEY
+);
+
+async function loadPublicPlayers() {
+  const container = document.getElementById("publicPlayers");
+
+  const { data, error } = await publicDB
+    .from("players")
+    .select("display_name, is_active")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.textContent = "Players are temporarily unavailable.";
+    console.error(error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    container.textContent = "No registered players yet.";
+    return;
+  }
+
+  container.innerHTML = data.map(player => `
+    <article class="card">
+      <div class="emoji">🎮</div>
+      <h3>${escapePlayerName(player.display_name)}</h3>
+      <p>Gamers-Node Member</p>
+    </article>
+  `).join("");
+}
+
+function escapePlayerName(value) {
+  const div = document.createElement("div");
+  div.textContent = value ?? "";
+  return div.innerHTML;
+}
+
+loadPublicPlayers();
+</script>
 
 </body>
 </html>
