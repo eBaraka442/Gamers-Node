@@ -18,168 +18,214 @@
 
 body {
     background: #090711;
-    color: #ffffff;
+    color: #eee8ff;
     font-family: Arial, sans-serif;
     padding: 20px;
 }
 
-.container {
-    max-width: 1100px;
-    margin: auto;
-}
-
-h1, h2 {
-    color: #c084fc;
-    margin-bottom: 18px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-section {
-    background: #151020;
+header {
+    background: #100b1c;
     border: 1px solid #39205c;
     border-radius: 12px;
-    padding: 22px;
+    padding: 20px;
     margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-input, select, button {
+header h1 {
+    color: #c084fc;
+}
+
+h2 {
+    color: #c084fc;
+    margin-bottom: 15px;
+}
+
+h3 {
+    color: #d8b4fe;
+    margin-bottom: 12px;
+}
+
+p {
+    line-height: 1.6;
+}
+
+section.panel {
+    background: #100b1c;
+    border: 1px solid #39205c;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 22px;
+}
+
+input, select, textarea {
     width: 100%;
     padding: 12px;
-    margin: 8px 0;
-    border-radius: 7px;
-    border: 1px solid #49316b;
-    background: #0d0917;
+    margin: 8px 0 15px;
+    background: #171326;
     color: white;
+    border: 1px solid #604080;
+    border-radius: 7px;
     font-size: 15px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: 1px solid #c084fc;
+    border-color: #c084fc;
+}
+
+label {
+    display: block;
+    color: #d8b4fe;
+    margin-top: 10px;
 }
 
 button {
     background: #8b5cf6;
+    color: white;
     border: none;
-    font-weight: bold;
+    padding: 12px 18px;
+    border-radius: 7px;
     cursor: pointer;
+    font-weight: bold;
+    margin: 5px 3px 5px 0;
 }
 
 button:hover {
-    background: #a879ff;
+    background: #a78bfa;
 }
 
 button:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
+button.secondary {
+    background: #302044;
+    border: 1px solid #7650a5;
+}
+
+button.danger {
+    background: #9f2948;
+}
+
 .message {
-    margin-top: 12px;
-    padding: 10px;
-    border-radius: 6px;
     display: none;
-    overflow-wrap: anywhere;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 7px;
+    line-height: 1.5;
 }
 
-.success {
-    background: #123b25;
-    color: #86efac;
+.message.success {
+    display: block;
+    background: #123c2a;
+    border: 1px solid #238653;
+    color: #b9f6d0;
 }
 
-.error {
-    background: #451a1a;
-    color: #fca5a5;
+.message.error {
+    display: block;
+    background: #451b2a;
+    border: 1px solid #a33c60;
+    color: #ffc1d2;
 }
 
-.info {
-    background: #241438;
-    color: #d8b4fe;
+.small-note {
+    color: #b9a7d5;
+    font-size: 13px;
+    margin: 5px 0 12px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.player-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin: 7px 0;
+    background: #171326;
+    border: 1px solid #39205c;
+    border-radius: 7px;
+}
+
+.player-option input {
+    width: auto;
+    margin: 0;
+    accent-color: #a855f7;
+}
+
+.player-option label {
+    margin: 0;
+    flex: 1;
+    color: #eee8ff;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    margin-top: 12px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
-    min-width: 500px;
+    min-width: 650px;
 }
 
 th, td {
+    padding: 11px;
     border: 1px solid #39205c;
-    padding: 12px;
     text-align: left;
 }
 
 th {
-    background: #241438;
-    color: #c084fc;
+    background: #28163d;
+    color: #d8b4fe;
 }
 
-.table-wrapper {
-    overflow-x: auto;
+td {
+    background: #171326;
+}
+
+.standings-group {
+    margin: 20px 0;
+    padding: 15px;
+    background: #171326;
+    border: 1px solid #604080;
+    border-radius: 10px;
+}
+
+.standings-group h3 {
+    margin-bottom: 10px;
+}
+
+.empty-message {
+    color: #b9a7d5;
+    padding: 12px 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #39205c;
+    margin: 20px 0;
+}
+
+#loginSection {
+    max-width: 430px;
+    margin: 60px auto;
 }
 
 #dashboard {
     display: none;
-}
-
-.forgot-button {
-    background: #241438;
-    border: 1px solid #8b5cf6;
-}
-
-.forgot-button:hover {
-    background: #39205c;
-}
-
-/* TOURNAMENT PLAYER ASSIGNMENT */
-
-.assignment-list {
-    margin-top: 12px;
-    border: 1px solid #39205c;
-    border-radius: 8px;
-    padding: 10px;
-    background: #0d0917;
-    max-height: 350px;
-    overflow-y: auto;
-}
-
-.assignment-player {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 8px;
-    border-bottom: 1px solid #302044;
-}
-
-.assignment-player:last-child {
-    border-bottom: none;
-}
-
-.assignment-player input {
-    width: 20px;
-    height: 20px;
-    margin: 0;
-    accent-color: #a855f7;
-    flex-shrink: 0;
-}
-
-.assignment-player label {
-    flex: 1;
-    cursor: pointer;
-    overflow-wrap: anywhere;
-}
-
-.assignment-count {
-    color: #c084fc;
-    font-weight: bold;
-    margin: 12px 0;
-}
-
-.assignment-help {
-    color: #c4b5fd;
-    line-height: 1.6;
-    font-size: 14px;
-    margin-bottom: 10px;
 }
 
 @media (max-width: 600px) {
@@ -187,12 +233,16 @@ th {
         padding: 10px;
     }
 
-    section {
+    section.panel {
         padding: 15px;
     }
 
-    .assignment-player {
-        padding: 14px 5px;
+    header {
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 22px;
     }
 }
 </style>
@@ -200,296 +250,311 @@ th {
 
 <body>
 
-<div class="container">
+<!-- LOGIN SECTION -->
 
-<h1>Gamers-Node Admin Dashboard</h1>
+<section id="loginSection" class="panel">
 
-<section id="loginSection">
+    <h2>Gamers-Node Admin Login</h2>
 
-    <h2>Admin Login</h2>
+    <p class="small-note">
+        Sign in using your authorised administrator account.
+    </p>
+
+    <div id="loginMessage" class="message"></div>
 
     <form id="loginForm">
 
+        <label for="loginEmail">Email Address</label>
         <input
             type="email"
-            id="email"
-            placeholder="Admin email"
+            id="loginEmail"
             required
+            autocomplete="email"
+            placeholder="Admin email"
         >
 
+        <label for="loginPassword">Password</label>
         <input
             type="password"
-            id="password"
-            placeholder="Password"
+            id="loginPassword"
             required
+            autocomplete="current-password"
+            placeholder="Password"
         >
 
         <button type="submit" id="loginButton">
             Login
         </button>
 
-        <button
-            type="button"
-            id="forgotPasswordButton"
-            class="forgot-button"
-        >
-            Forgot Password?
-        </button>
-
     </form>
 
-    <div id="message" class="message"></div>
+    <button type="button" class="secondary" id="forgotPasswordButton">
+        Forgot Password?
+    </button>
 
 </section>
 
-<div id="dashboard">
 
-<section>
-    <h2>Welcome, Admin</h2>
+<!-- ADMIN DASHBOARD -->
 
-    <button type="button" id="logoutButton">
-        Logout
-    </button>
+<main id="dashboard">
+
+    <header>
+        <div>
+            <h1>Gamers-Node</h1>
+            <p class="small-note">Administrator Dashboard</p>
+        </div>
+
+        <button type="button" class="danger" id="logoutButton">
+            Logout
+        </button>
+    </header>
 
     <div id="dashboardMessage" class="message"></div>
-</section>
 
-<section>
-    <h2>Register Player</h2>
 
-    <form id="playerForm">
+    <!-- PLAYER REGISTRATION -->
 
-        <input
-            type="text"
-            id="playerName"
-            placeholder="Player name"
-            required
-        >
+    <section class="panel">
 
-        <button type="submit">
-            Register Player
-        </button>
+        <h2>Register Player</h2>
 
-    </form>
-</section>
+        <form id="playerForm">
 
-<section>
-    <h2>Create Tournament</h2>
+            <label for="playerName">Player Display Name</label>
+            <input
+                type="text"
+                id="playerName"
+                required
+                placeholder="Enter player name"
+            >
 
-    <form id="tournamentForm">
+            <label for="playerEmail">Player Email</label>
+            <input
+                type="email"
+                id="playerEmail"
+                placeholder="Enter player email"
+            >
 
-        <input
-            type="text"
-            id="tournamentName"
-            placeholder="Tournament name"
-            required
-        >
+            <button type="submit">
+                Register Player
+            </button>
 
-        <input
-            type="text"
-            id="tournamentSeason"
-            placeholder="Season (e.g. Season 1)"
-            required
-        >
+        </form>
 
-        <select id="tournamentStatus" required>
-            <option value="upcoming">Upcoming</option>
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
-        </select>
+    </section>
 
-        <input
-            type="date"
-            id="tournamentDate"
-        >
 
-        <button type="submit">
-            Create Tournament
-        </button>
+    <div class="dashboard-grid">
 
-    </form>
-</section>
+        <!-- CREATE TOURNAMENT -->
 
-<!-- TOURNAMENT PLAYER ASSIGNMENT -->
+        <section class="panel">
 
-<section>
-    <h2>Tournament Player Assignment</h2>
+            <h2>Create Tournament</h2>
 
-    <p class="assignment-help">
-        Select a tournament, then choose between 1 and 30
-        active players who will participate in that tournament.
-        Each tournament has its own independent group.
-        A player can participate in multiple tournaments.
-    </p>
+            <form id="tournamentForm">
 
-    <select id="assignmentTournament">
-        <option value="">Select Tournament</option>
-    </select>
+                <label for="tournamentName">Tournament Name</label>
+                <input
+                    type="text"
+                    id="tournamentName"
+                    required
+                    placeholder="Enter tournament name"
+                >
 
-    <div id="assignmentCount" class="assignment-count">
-        Selected players: 0 / 30
+                <label for="tournamentGame">Game</label>
+                <input
+                    type="text"
+                    id="tournamentGame"
+                    required
+                    placeholder="Enter game name"
+                >
+
+                <label for="tournamentStartDate">Start Date</label>
+                <input
+                    type="date"
+                    id="tournamentStartDate"
+                >
+
+                <button type="submit">
+                    Create Tournament
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- TOURNAMENT PLAYER ASSIGNMENT -->
+
+        <section class="panel">
+
+            <h2>Assign Tournament Players</h2>
+
+            <label for="assignmentTournament">
+                Select Tournament
+            </label>
+
+            <select id="assignmentTournament">
+                <option value="">Select Tournament</option>
+            </select>
+
+            <p class="small-note">
+                Select between 1 and 30 active players for this tournament.
+                Each tournament has its own independent player list.
+            </p>
+
+            <h3 id="assignmentCount">
+                Selected players: 0 / 30
+            </h3>
+
+            <div id="assignmentPlayers">
+                <p class="empty-message">
+                    Select a tournament to view active players.
+                </p>
+            </div>
+
+            <button type="button" id="saveAssignmentsButton">
+                Save Player Assignments
+            </button>
+
+        </section>
+
     </div>
 
-    <div id="assignmentPlayers" class="assignment-list">
-        <p class="assignment-help">
-            Select a tournament to load registered players.
+
+    <!-- RECORD MATCH -->
+
+    <section class="panel">
+
+        <h2>Record Match Results</h2>
+
+        <form id="matchForm">
+
+            <label for="matchTournament">
+                Select Tournament
+            </label>
+
+            <select id="matchTournament" required>
+                <option value="">Select Tournament</option>
+            </select>
+
+            <label for="homePlayer">Home Player</label>
+            <select id="homePlayer" required>
+                <option value="">Select Home Player</option>
+            </select>
+
+            <label for="awayPlayer">Away Player</label>
+            <select id="awayPlayer" required>
+                <option value="">Select Away Player</option>
+            </select>
+
+            <label for="homeScore">Home Player Score</label>
+            <input
+                type="number"
+                id="homeScore"
+                min="0"
+                step="1"
+                required
+                placeholder="Home score"
+            >
+
+            <label for="awayScore">Away Player Score</label>
+            <input
+                type="number"
+                id="awayScore"
+                min="0"
+                step="1"
+                required
+                placeholder="Away score"
+            >
+
+            <button type="submit">
+                Save Match Result
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- REGISTERED PLAYERS -->
+
+    <section class="panel">
+
+        <h2>Registered Players</h2>
+
+        <div id="playersList">
+            <p class="empty-message">Loading players...</p>
+        </div>
+
+    </section>
+
+
+    <!-- TOURNAMENT LIST -->
+
+    <section class="panel">
+
+        <h2>Tournaments</h2>
+
+        <div id="tournamentsList">
+            <p class="empty-message">Loading tournaments...</p>
+        </div>
+
+    </section>
+
+
+    <!-- INDEPENDENT TOURNAMENT STANDINGS -->
+
+    <section class="panel">
+
+        <h2>League Standings</h2>
+
+        <p class="small-note">
+            Every tournament has a separate standings table.
+            Only players assigned to that tournament should appear.
         </p>
-    </div>
 
-    <button type="button" id="saveAssignmentsButton">
-        Save Tournament Players
-    </button>
+        <div id="standingsGroups">
+            <p class="empty-message">Loading standings...</p>
+        </div>
 
-    <div id="assignmentMessage" class="message"></div>
-</section>
+    </section>
 
-<section>
-    <h2>Enter Match Results</h2>
+</main>
 
-    <form id="matchForm">
-
-        <select id="matchTournament" required>
-            <option value="">Select Tournament</option>
-        </select>
-
-        <select id="homePlayer" required>
-            <option value="">Select Home Player</option>
-        </select>
-
-        <select id="awayPlayer" required>
-            <option value="">Select Away Player</option>
-        </select>
-
-        <input
-            type="number"
-            id="homeScore"
-            placeholder="Home score"
-            min="0"
-            required
-        >
-
-        <input
-            type="number"
-            id="awayScore"
-            placeholder="Away score"
-            min="0"
-            required
-        >
-
-        <button type="submit">
-            Save Match Result
-        </button>
-
-    </form>
-</section>
-
-<section>
-    <h2>Registered Players</h2>
-
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Player</th>
-                    <th>Status</th>
-                    <th>Registered</th>
-                </tr>
-            </thead>
-
-            <tbody id="playersTable">
-                <tr>
-                    <td colspan="3">Loading players...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<section>
-    <h2>Tournaments</h2>
-
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Tournament</th>
-                    <th>Season</th>
-                    <th>Status</th>
-                    <th>Start Date</th>
-                </tr>
-            </thead>
-
-            <tbody id="tournamentsTable">
-                <tr>
-                    <td colspan="4">Loading tournaments...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<section>
-    <h2>League Standings</h2>
-
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Player</th>
-                    <th>Played</th>
-                    <th>Won</th>
-                    <th>Drawn</th>
-                    <th>Lost</th>
-                    <th>Points</th>
-                </tr>
-            </thead>
-
-            <tbody id="standingsTable">
-                <tr>
-                    <td colspan="6">Loading standings...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-</div>
-
+<!-- PART 2 JAVASCRIPT WILL BE INSERTED HERE -->
+        
 <script>
-const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
+"use strict";
 
-const RESET_PASSWORD_URL =
-    "https://ebaraka442.github.io/Gamers-Node/reset-password.html";
+// ==========================================
+// SUPABASE CONNECTION
+// ==========================================
+
+const SUPABASE_URL =
+    "https://zptxyfqqgxnxktquvkrk.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
 const db = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
-const loginSection = document.getElementById("loginSection");
-const dashboard = document.getElementById("dashboard");
-const loginForm = document.getElementById("loginForm");
-const loginButton = document.getElementById("loginButton");
-const message = document.getElementById("message");
-const dashboardMessage = document.getElementById("dashboardMessage");
-const assignmentMessage = document.getElementById("assignmentMessage");
+// ==========================================
+// GLOBAL VARIABLES
+// ==========================================
 
 let activePlayers = [];
-let tournamentList = [];
 let selectedTournamentPlayers = [];
 
-function showMessage(element, text, type = "error") {
-    element.textContent = text;
-    element.className = "message " + type;
-    element.style.display = "block";
-}
+// ==========================================
+// HTML SAFETY
+// ==========================================
 
-function hideMessage(element) {
-    element.textContent = "";
-    element.style.display = "none";
-}
-    
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, character => ({
         "&": "&amp;",
@@ -510,14 +575,59 @@ function formatDate(value) {
         : date.toLocaleDateString();
 }
 
-// ADMIN VERIFICATION
+// ==========================================
+// MESSAGES
+// ==========================================
+
+function showMessage(element, message, type = "error") {
+    element.textContent = message;
+    element.className = "message " + type;
+}
+
+function hideMessage(element) {
+    element.textContent = "";
+    element.className = "message";
+}
+
+// ==========================================
+// LOGIN AND DASHBOARD DISPLAY
+// ==========================================
+
+const loginSection =
+    document.getElementById("loginSection");
+
+const dashboard =
+    document.getElementById("dashboard");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const dashboardMessage =
+    document.getElementById("dashboardMessage");
+
+function showLogin() {
+    loginSection.style.display = "block";
+    dashboard.style.display = "none";
+}
+
+function showDashboard() {
+    loginSection.style.display = "none";
+    dashboard.style.display = "block";
+}
+
+// ==========================================
+// VERIFY ADMINISTRATOR ROLE
+// ==========================================
 
 async function checkAdmin() {
-    const { data: { user }, error: userError } =
-        await db.auth.getUser();
+    const {
+        data: { user },
+        error: userError
+    } = await db.auth.getUser();
 
     if (userError || !user) {
-        throw new Error("Please log in again.");
+        showLogin();
+        return false;
     }
 
     const { data, error } = await db
@@ -526,66 +636,50 @@ async function checkAdmin() {
         .eq("user_id", user.id)
         .maybeSingle();
 
-    if (error) throw error;
-
-    if (!data || !["admin", "super_admin"].includes(data.role)) {
-        throw new Error("This account does not have admin access.");
+    if (error) {
+        throw error;
     }
 
-    return user;
-}
-
-// FORGOT PASSWORD
-
-document.getElementById("forgotPasswordButton")
-.addEventListener("click", async function() {
-
-    const email = document.getElementById("email").value.trim();
-
-    if (!email) {
-        showMessage(message, "Enter your admin email first.");
-        return;
-    }
-
-    this.disabled = true;
-    this.textContent = "Sending recovery email...";
-
-    try {
-        const { error } = await db.auth.resetPasswordForEmail(
-            email,
-            {
-                redirectTo: RESET_PASSWORD_URL
-            }
-        );
-
-        if (error) throw error;
+    if (
+        !data ||
+        !["admin", "super_admin"].includes(data.role)
+    ) {
+        await db.auth.signOut();
+        showLogin();
 
         showMessage(
-            message,
-            "Recovery email sent. Check your inbox.",
-            "success"
+            loginMessage,
+            "Access denied. This account is not authorised as an administrator."
         );
 
-    } catch (error) {
-        showMessage(message, "Recovery failed: " + error.message);
-    } finally {
-        this.disabled = false;
-        this.textContent = "Forgot Password?";
+        return false;
     }
-});
 
-// LOGIN
+    return true;
+}
 
-loginForm.addEventListener("submit", async function(event) {
+// ==========================================
+// ADMIN LOGIN
+// ==========================================
+
+document.getElementById("loginForm")
+.addEventListener("submit", async function(event) {
+
     event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const button =
+        document.getElementById("loginButton");
 
-    loginButton.disabled = true;
-    loginButton.textContent = "Logging in...";
+    button.disabled = true;
+    hideMessage(loginMessage);
 
     try {
+        const email =
+            document.getElementById("loginEmail").value.trim();
+
+        const password =
+            document.getElementById("loginPassword").value;
+
         const { error } = await db.auth.signInWithPassword({
             email,
             password
@@ -593,377 +687,215 @@ loginForm.addEventListener("submit", async function(event) {
 
         if (error) throw error;
 
-        await checkAdmin();
+        const authorised = await checkAdmin();
+
+        if (!authorised) return;
 
         showDashboard();
-
-        showMessage(
-            dashboardMessage,
-            "Login successful. Welcome to Gamers-Node!",
-            "success"
-        );
 
         await loadDashboard();
 
     } catch (error) {
-        await db.auth.signOut();
         showLogin();
-        showMessage(message, error.message);
+
+        showMessage(
+            loginMessage,
+            error.message
+        );
+
     } finally {
-        loginButton.disabled = false;
-        loginButton.textContent = "Login";
+        button.disabled = false;
     }
 });
 
-// LOGOUT
+// ==========================================
+// FORGOT PASSWORD
+// ==========================================
 
-document.getElementById("logoutButton")
+document.getElementById("forgotPasswordButton")
 .addEventListener("click", async function() {
-    const { error } = await db.auth.signOut();
 
-    if (error) {
-        showMessage(dashboardMessage, error.message);
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    if (!email) {
+        showMessage(
+            loginMessage,
+            "Enter your email address first."
+        );
         return;
     }
 
-    showLogin();
-    hideMessage(message);
-});
-
-// RESTORE SESSION
-
-async function restoreSession() {
     try {
-        const { data, error } = await db.auth.getSession();
+        const { error } = await db.auth.resetPasswordForEmail(
+            email,
+            {
+                redirectTo:
+                    "https://ebaraka442.github.io/Gamers-Node/reset-password.html"
+            }
+        );
 
         if (error) throw error;
 
-        if (!data.session) {
-            showLogin();
-            return;
-        }
-
-        await checkAdmin();
-        showDashboard();
-        await loadDashboard();
+        showMessage(
+            loginMessage,
+            "Password reset instructions have been sent if the account exists.",
+            "success"
+        );
 
     } catch (error) {
-        await db.auth.signOut();
-        showLogin();
-        showMessage(message, error.message);
+        showMessage(loginMessage, error.message);
     }
-}
+});
 
+// ==========================================
+// LOGOUT
+// ==========================================
+
+document.getElementById("logoutButton")
+.addEventListener("click", async function() {
+
+    try {
+        const { error } = await db.auth.signOut();
+
+        if (error) throw error;
+
+        showLogin();
+
+        document.getElementById("loginForm").reset();
+
+    } catch (error) {
+        showMessage(dashboardMessage, error.message);
+    }
+});
+
+// ==========================================
 // LOAD DASHBOARD
+// ==========================================
 
 async function loadDashboard() {
+    hideMessage(dashboardMessage);
+
     try {
         await Promise.all([
             loadPlayers(),
             loadTournaments(),
             loadStandings()
         ]);
+
     } catch (error) {
         showMessage(
             dashboardMessage,
-            "Dashboard loading failed: " + error.message
+            error.message
         );
     }
 }
 
-// LOAD PLAYERS
+// ==========================================
+// RESTORE EXISTING SESSION
+// ==========================================
+
+async function restoreSession() {
+    try {
+        const authorised = await checkAdmin();
+
+        if (!authorised) return;
+
+        showDashboard();
+
+        await loadDashboard();
+
+    } catch (error) {
+        showLogin();
+
+        showMessage(
+            loginMessage,
+            error.message
+        );
+    }
+}
+
+restoreSession();
+</script>
+
+// ==========================================
+// REGISTERED PLAYERS
+// ==========================================
 
 async function loadPlayers() {
     const { data, error } = await db
         .from("players")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("display_name", { ascending: true });
 
     if (error) throw error;
 
-    const table = document.getElementById("playersTable");
+    activePlayers = (data || []).filter(player =>
+        player.is_active !== false
+    );
+
+    const container =
+        document.getElementById("playersList");
 
     if (!data || data.length === 0) {
-        table.innerHTML =
-            '<tr><td colspan="3">No players registered yet.</td></tr>';
-    } else {
-        table.innerHTML = data.map(player => `
-            <tr>
-                <td>${escapeHTML(player.display_name)}</td>
-                <td>${player.is_active ? "Active" : "Inactive"}</td>
-                <td>${formatDate(player.created_at)}</td>
-            </tr>
-        `).join("");
-    }
-
-    activePlayers = (data || []).filter(player => player.is_active);
-
-    renderAssignmentPlayers();
-}
-
-// LOAD TOURNAMENTS
-
-async function loadTournaments() {
-    const { data, error } = await db
-        .from("tournaments")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    tournamentList = data || [];
-
-    const table = document.getElementById("tournamentsTable");
-
-    if (tournamentList.length === 0) {
-        table.innerHTML =
-            '<tr><td colspan="4">No tournaments created yet.</td></tr>';
-    } else {
-        table.innerHTML = tournamentList.map(tournament => `
-            <tr>
-                <td>${escapeHTML(tournament.name)}</td>
-                <td>${escapeHTML(tournament.season || "")}</td>
-                <td>${escapeHTML(tournament.status)}</td>
-                <td>${escapeHTML(tournament.start_date || "Not set")}</td>
-            </tr>
-        `).join("");
-    }
-
-    const options = tournamentList.map(tournament => `
-        <option value="${escapeHTML(tournament.id)}">
-            ${escapeHTML(tournament.name)}
-        </option>
-    `).join("");
-
-    document.getElementById("matchTournament").innerHTML =
-        '<option value="">Select Tournament</option>' + options;
-
-    document.getElementById("assignmentTournament").innerHTML =
-        '<option value="">Select Tournament</option>' + options;
-
-    selectedTournamentPlayers = [];
-    renderAssignmentPlayers();
-}
-
-// ASSIGNMENT PLAYER DISPLAY
-
-function renderAssignmentPlayers() {
-    const container = document.getElementById("assignmentPlayers");
-    const count = document.getElementById("assignmentCount");
-
-    const tournamentId =
-        document.getElementById("assignmentTournament").value;
-
-    if (!tournamentId) {
         container.innerHTML =
-            '<p class="assignment-help">Select a tournament to load registered players.</p>';
-
-        count.textContent = "Selected players: 0 / 30";
-        return;
-    }
-
-    if (activePlayers.length === 0) {
-        container.innerHTML =
-            '<p class="assignment-help">No active registered players found.</p>';
-
-        count.textContent = "Selected players: 0 / 30";
-        return;
-    }
-
-    container.innerHTML = activePlayers.map(player => {
-        const checked = selectedTournamentPlayers.includes(player.id);
-
-        return `
-            <div class="assignment-player">
-                <input
-                    type="checkbox"
-                    id="assign_${escapeHTML(player.id)}"
-                    value="${escapeHTML(player.id)}"
-                    ${checked ? "checked" : ""}
-                >
-                <label for="assign_${escapeHTML(player.id)}">
-                    ${escapeHTML(player.display_name)}
-                </label>
+            '<p class="empty-message">No registered players yet.</p>';
+    } else {
+        container.innerHTML = `
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${(data || []).map(player => `
+                            <tr>
+                                <td>${escapeHTML(player.display_name)}</td>
+                                <td>${player.is_active === false ? "Inactive" : "Active"}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
             </div>
         `;
-    }).join("");
-
-    count.textContent =
-        "Selected players: " + selectedTournamentPlayers.length + " / 30";
-
-    container.querySelectorAll('input[type="checkbox"]')
-    .forEach(checkbox => {
-        checkbox.addEventListener("change", function() {
-            if (this.checked) {
-                if (selectedTournamentPlayers.length >= 30) {
-                    this.checked = false;
-
-                    showMessage(
-                        assignmentMessage,
-                        "You can select a maximum of 30 players.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-                selectedTournamentPlayers.push(this.value);
-
-            } else {
-                selectedTournamentPlayers =
-                    selectedTournamentPlayers.filter(id => id !== this.value);
-            }
-
-            count.textContent =
-                "Selected players: " + selectedTournamentPlayers.length + " / 30";
-
-            hideMessage(assignmentMessage);
-        });
-    });
-}
-
-// LOAD EXISTING ASSIGNMENTS
-
-async function loadTournamentAssignments(tournamentId) {
-    selectedTournamentPlayers = [];
-
-    if (!tournamentId) {
-        renderAssignmentPlayers();
-        return;
     }
-
-    const { data, error } = await db
-        .from("tournament_players")
-        .select("player_id")
-        .eq("tournament_id", tournamentId);
-
-    if (error) throw error;
-
-    selectedTournamentPlayers =
-        (data || []).map(row => row.player_id);
 
     renderAssignmentPlayers();
 }
 
-// SELECT TOURNAMENT FOR ASSIGNMENT
-
-document.getElementById("assignmentTournament")
-.addEventListener("change", async function() {
-    hideMessage(assignmentMessage);
-
-    try {
-        await loadTournamentAssignments(this.value);
-    } catch (error) {
-        showMessage(
-            assignmentMessage,
-            "Could not load assignments: " + error.message
-        );
-    }
-});
-
-// SAVE TOURNAMENT ASSIGNMENTS
-
-document.getElementById("saveAssignmentsButton")
-.addEventListener("click", async function() {
-    const button = this;
-
-    const tournamentId =
-        document.getElementById("assignmentTournament").value;
-
-    if (!tournamentId) {
-        showMessage(assignmentMessage, "Select a tournament first.");
-        return;
-    }
-
-    if (
-        selectedTournamentPlayers.length < 1 ||
-        selectedTournamentPlayers.length > 30
-    ) {
-        showMessage(
-            assignmentMessage,
-            "Select between 1 and 30 players before saving."
-        );
-        return;
-    }
-
-    button.disabled = true;
-    button.textContent = "Saving assignments...";
-
-    try {
-        const { data: existing, error: existingError } = await db
-            .from("tournament_players")
-            .select("player_id")
-            .eq("tournament_id", tournamentId);
-
-        if (existingError) throw existingError;
-
-        const existingIds = (existing || []).map(row => row.player_id);
-
-        const toAdd = selectedTournamentPlayers
-            .filter(id => !existingIds.includes(id))
-            .map(id => ({
-                tournament_id: tournamentId,
-                player_id: id
-            }));
-
-        const toRemove = existingIds
-            .filter(id => !selectedTournamentPlayers.includes(id));
-
-        if (toAdd.length > 0) {
-            const { error } = await db
-                .from("tournament_players")
-                .insert(toAdd);
-
-            if (error) throw error;
-        }
-
-        if (toRemove.length > 0) {
-            const { error } = await db
-                .from("tournament_players")
-                .delete()
-                .eq("tournament_id", tournamentId)
-                .in("player_id", toRemove);
-
-            if (error) throw error;
-        }
-
-        showMessage(
-            assignmentMessage,
-            "Successfully saved " + selectedTournamentPlayers.length +
-            " players for this tournament!",
-            "success"
-        );
-
-    } catch (error) {
-        showMessage(
-            assignmentMessage,
-            "Assignment failed: " + error.message
-        );
-    } finally {
-        button.disabled = false;
-        button.textContent = "Save Tournament Players";
-    }
-});
-
+// ==========================================
 // REGISTER PLAYER
+// ==========================================
 
 document.getElementById("playerForm")
 .addEventListener("submit", async function(event) {
+
     event.preventDefault();
 
     const button = this.querySelector("button");
-    const name = document.getElementById("playerName").value.trim();
-
-    if (!name) return;
 
     button.disabled = true;
+    hideMessage(dashboardMessage);
 
     try {
+        const display_name =
+            document.getElementById("playerName").value.trim();
+
+        const email =
+            document.getElementById("playerEmail").value.trim() || null;
+
+        if (!display_name) {
+            throw new Error("Enter a player name.");
+        }
+
         const { error } = await db
             .from("players")
             .insert({
-                display_name: name,
-                is_active: true
+                display_name,
+                email
             });
 
         if (error) throw error;
@@ -980,38 +912,113 @@ document.getElementById("playerForm")
 
     } catch (error) {
         showMessage(dashboardMessage, error.message);
+
     } finally {
         button.disabled = false;
     }
 });
-    
+
+// ==========================================
+// LOAD TOURNAMENTS
+// ==========================================
+
+async function loadTournaments() {
+    const { data, error } = await db
+        .from("tournaments")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const tournaments = data || [];
+
+    const list =
+        document.getElementById("tournamentsList");
+
+    const assignmentSelect =
+        document.getElementById("assignmentTournament");
+
+    const matchSelect =
+        document.getElementById("matchTournament");
+
+    const previousAssignment =
+        assignmentSelect.value;
+
+    const previousMatch =
+        matchSelect.value;
+
+    if (tournaments.length === 0) {
+        list.innerHTML =
+            '<p class="empty-message">No tournaments created yet.</p>';
+    } else {
+        list.innerHTML = tournaments.map(tournament => `
+            <div class="standings-group">
+                <h3>${escapeHTML(tournament.name)}</h3>
+                <p>Game: ${escapeHTML(tournament.game || "—")}</p>
+                <p>Start date: ${formatDate(tournament.start_date)}</p>
+            </div>
+        `).join("");
+    }
+
+    const options = tournaments.map(tournament => `
+        <option value="${escapeHTML(tournament.id)}">
+            ${escapeHTML(tournament.name)}
+        </option>
+    `).join("");
+
+    assignmentSelect.innerHTML =
+        '<option value="">Select Tournament</option>' + options;
+
+    matchSelect.innerHTML =
+        '<option value="">Select Tournament</option>' + options;
+
+    if (tournaments.some(t => t.id === previousAssignment)) {
+        assignmentSelect.value = previousAssignment;
+        await loadTournamentAssignments(previousAssignment);
+    } else {
+        selectedTournamentPlayers = [];
+        renderAssignmentPlayers();
+    }
+
+    if (tournaments.some(t => t.id === previousMatch)) {
+        matchSelect.value = previousMatch;
+        await loadMatchPlayers(previousMatch);
+    }
+}
+
+// ==========================================
 // CREATE TOURNAMENT
+// ==========================================
 
 document.getElementById("tournamentForm")
 .addEventListener("submit", async function(event) {
+
     event.preventDefault();
 
     const button = this.querySelector("button");
 
-    const name = document.getElementById("tournamentName").value.trim();
-    const season = document.getElementById("tournamentSeason").value.trim();
-    const status = document.getElementById("tournamentStatus").value;
-    const startDate = document.getElementById("tournamentDate").value;
-
-    if (!name || !season) {
-        showMessage(dashboardMessage, "Enter tournament name and season.");
-        return;
-    }
-
     button.disabled = true;
+    hideMessage(dashboardMessage);
 
     try {
+        const name =
+            document.getElementById("tournamentName").value.trim();
+
+        const game =
+            document.getElementById("tournamentGame").value.trim();
+
+        const startDate =
+            document.getElementById("tournamentStartDate").value;
+
+        if (!name || !game) {
+            throw new Error("Enter the tournament name and game.");
+        }
+
         const { error } = await db
             .from("tournaments")
             .insert({
                 name,
-                season,
-                status,
+                game,
                 start_date: startDate || null
             });
 
@@ -1026,19 +1033,239 @@ document.getElementById("tournamentForm")
         );
 
         await loadTournaments();
+        await loadStandings();
 
     } catch (error) {
         showMessage(dashboardMessage, error.message);
+
     } finally {
         button.disabled = false;
     }
 });
 
-// LOAD PLAYERS FOR SELECTED MATCH TOURNAMENT
+// ==========================================
+// LOAD SAVED TOURNAMENT ASSIGNMENTS
+// ==========================================
+
+async function loadTournamentAssignments(tournamentId) {
+    selectedTournamentPlayers = [];
+
+    if (!tournamentId) {
+        renderAssignmentPlayers();
+        return;
+    }
+
+    const { data, error } = await db
+        .from("tournament_players")
+        .select("player_id")
+        .eq("tournament_id", tournamentId);
+
+    if (error) throw error;
+
+    selectedTournamentPlayers = (data || [])
+        .map(row => row.player_id);
+
+    renderAssignmentPlayers();
+}
+
+// ==========================================
+// RENDER ASSIGNMENT PLAYERS
+// ==========================================
+
+function renderAssignmentPlayers() {
+    const container =
+        document.getElementById("assignmentPlayers");
+
+    const count =
+        document.getElementById("assignmentCount");
+
+    count.textContent =
+        `Selected players: ${selectedTournamentPlayers.length} / 30`;
+
+    if (!document.getElementById("assignmentTournament").value) {
+        container.innerHTML =
+            '<p class="empty-message">Select a tournament first.</p>';
+        return;
+    }
+
+    if (activePlayers.length === 0) {
+        container.innerHTML =
+            '<p class="empty-message">No active players available.</p>';
+        return;
+    }
+
+    container.innerHTML = activePlayers.map(player => {
+        const checked =
+            selectedTournamentPlayers.includes(player.id);
+
+        return `
+            <div class="player-option">
+                <input
+                    type="checkbox"
+                    class="assignment-checkbox"
+                    id="assign-${escapeHTML(player.id)}"
+                    value="${escapeHTML(player.id)}"
+                    ${checked ? "checked" : ""}
+                >
+
+                <label for="assign-${escapeHTML(player.id)}">
+                    ${escapeHTML(player.display_name)}
+                </label>
+            </div>
+        `;
+    }).join("");
+
+    container.querySelectorAll(".assignment-checkbox")
+        .forEach(checkbox => {
+
+            checkbox.addEventListener("change", function() {
+
+                if (this.checked) {
+                    if (selectedTournamentPlayers.length >= 30) {
+                        this.checked = false;
+
+                        showMessage(
+                            dashboardMessage,
+                            "A tournament cannot have more than 30 players."
+                        );
+
+                        return;
+                    }
+
+                    selectedTournamentPlayers.push(this.value);
+
+                } else {
+                    selectedTournamentPlayers =
+                        selectedTournamentPlayers.filter(id =>
+                            id !== this.value
+                        );
+                }
+
+                hideMessage(dashboardMessage);
+
+                count.textContent =
+                    `Selected players: ${selectedTournamentPlayers.length} / 30`;
+            });
+        });
+}
+
+// ==========================================
+// TOURNAMENT SELECTION
+// ==========================================
+
+document.getElementById("assignmentTournament")
+.addEventListener("change", async function() {
+
+    hideMessage(dashboardMessage);
+
+    try {
+        await loadTournamentAssignments(this.value);
+
+    } catch (error) {
+        showMessage(dashboardMessage, error.message);
+    }
+});
+
+// ==========================================
+// SAVE PLAYER ASSIGNMENTS
+// ==========================================
+
+document.getElementById("saveAssignmentsButton")
+.addEventListener("click", async function() {
+
+    const button = this;
+
+    const tournamentId =
+        document.getElementById("assignmentTournament").value;
+
+    button.disabled = true;
+    hideMessage(dashboardMessage);
+
+    try {
+        if (!tournamentId) {
+            throw new Error("Select a tournament first.");
+        }
+
+        if (
+            selectedTournamentPlayers.length < 1 ||
+            selectedTournamentPlayers.length > 30
+        ) {
+            throw new Error(
+                "Select between 1 and 30 players for this tournament."
+            );
+        }
+
+        const { data: existing, error: fetchError } = await db
+            .from("tournament_players")
+            .select("player_id")
+            .eq("tournament_id", tournamentId);
+
+        if (fetchError) throw fetchError;
+
+        const existingIds = new Set(
+            (existing || []).map(row => row.player_id)
+        );
+
+        const selectedIds = new Set(
+            selectedTournamentPlayers
+        );
+
+        const toInsert = [...selectedIds]
+            .filter(id => !existingIds.has(id))
+            .map(player_id => ({
+                tournament_id: tournamentId,
+                player_id
+            }));
+
+        const toDelete = [...existingIds]
+            .filter(id => !selectedIds.has(id));
+
+        if (toInsert.length > 0) {
+            const { error } = await db
+                .from("tournament_players")
+                .insert(toInsert);
+
+            if (error) throw error;
+        }
+
+        for (const playerId of toDelete) {
+            const { error } = await db
+                .from("tournament_players")
+                .delete()
+                .eq("tournament_id", tournamentId)
+                .eq("player_id", playerId);
+
+            if (error) throw error;
+        }
+
+        await loadTournamentAssignments(tournamentId);
+        await loadMatchPlayers(
+            document.getElementById("matchTournament").value
+        );
+        await loadStandings();
+
+        showMessage(
+            dashboardMessage,
+            `Successfully saved ${selectedIds.size} player assignments.`,
+            "success"
+        );
+
+    } catch (error) {
+        showMessage(dashboardMessage, error.message);
+
+    } finally {
+        button.disabled = false;
+    }
+// ==========================================
+// LOAD PLAYERS FOR MATCH
+// ==========================================
 
 async function loadMatchPlayers(tournamentId) {
-    const homeSelect = document.getElementById("homePlayer");
-    const awaySelect = document.getElementById("awayPlayer");
+    const homeSelect =
+        document.getElementById("homePlayer");
+
+    const awaySelect =
+        document.getElementById("awayPlayer");
 
     homeSelect.innerHTML =
         '<option value="">Loading assigned players...</option>';
@@ -1071,16 +1298,14 @@ async function loadMatchPlayers(tournamentId) {
         assignedIds.has(player.id)
     );
 
-    if (tournamentPlayers.length < 1) {
+    if (tournamentPlayers.length < 2) {
         homeSelect.innerHTML =
-            '<option value="">No assigned active players</option>';
+            '<option value="">Not enough assigned players</option>';
 
         awaySelect.innerHTML =
-            '<option value="">No assigned active players</option>';
+            '<option value="">Not enough assigned players</option>';
 
-        throw new Error(
-            "This tournament has no assigned active players. Check Tournament Player Assignment."
-        );
+        return;
     }
 
     const options = tournamentPlayers.map(player => `
@@ -1096,23 +1321,30 @@ async function loadMatchPlayers(tournamentId) {
         '<option value="">Select Away Player</option>' + options;
 }
 
+// ==========================================
 // MATCH TOURNAMENT SELECTION
+// ==========================================
 
 document.getElementById("matchTournament")
 .addEventListener("change", async function() {
+
     hideMessage(dashboardMessage);
 
     try {
         await loadMatchPlayers(this.value);
+
     } catch (error) {
         showMessage(dashboardMessage, error.message);
     }
 });
 
+// ==========================================
 // SAVE MATCH RESULTS
+// ==========================================
 
 document.getElementById("matchForm")
 .addEventListener("submit", async function(event) {
+
     event.preventDefault();
 
     const button = this.querySelector("button");
@@ -1132,33 +1364,31 @@ document.getElementById("matchForm")
     const away_score =
         Number(document.getElementById("awayScore").value);
 
-    if (!tournament_id || !home_player_id || !away_player_id) {
-        showMessage(dashboardMessage, "Select all match details.");
-        return;
-    }
-
-    if (home_player_id === away_player_id) {
-        showMessage(
-            dashboardMessage,
-            "A player cannot play against themselves."
-        );
-        return;
-    }
-
-    if (
-        !Number.isInteger(home_score) ||
-        !Number.isInteger(away_score) ||
-        home_score < 0 ||
-        away_score < 0
-    ) {
-        showMessage(dashboardMessage, "Enter valid scores.");
-        return;
-    }
-
     button.disabled = true;
-    button.textContent = "Saving match...";
+    hideMessage(dashboardMessage);
 
     try {
+        if (!tournament_id) {
+            throw new Error("Select a tournament.");
+        }
+
+        if (!home_player_id || !away_player_id) {
+            throw new Error("Select both players.");
+        }
+
+        if (home_player_id === away_player_id) {
+            throw new Error("A player cannot play against themselves.");
+        }
+
+        if (
+            !Number.isInteger(home_score) ||
+            !Number.isInteger(away_score) ||
+            home_score < 0 ||
+            away_score < 0
+        ) {
+            throw new Error("Scores must be non-negative whole numbers.");
+        }
+
         const { data: assignments, error: assignmentError } = await db
             .from("tournament_players")
             .select("player_id")
@@ -1175,7 +1405,7 @@ document.getElementById("matchForm")
             !assignedIds.has(away_player_id)
         ) {
             throw new Error(
-                "Both players must belong to the selected tournament."
+                "Both players must be assigned to this tournament."
             );
         }
 
@@ -1186,19 +1416,12 @@ document.getElementById("matchForm")
                 home_player_id,
                 away_player_id,
                 home_score,
-                away_score,
-                played_at: new Date().toISOString()
+                away_score
             });
 
         if (error) throw error;
 
         this.reset();
-
-        document.getElementById("homePlayer").innerHTML =
-            '<option value="">Select Home Player</option>';
-
-        document.getElementById("awayPlayer").innerHTML =
-            '<option value="">Select Away Player</option>';
 
         showMessage(
             dashboardMessage,
@@ -1206,66 +1429,155 @@ document.getElementById("matchForm")
             "success"
         );
 
+        await loadMatchPlayers(tournament_id);
         await loadStandings();
 
     } catch (error) {
-        showMessage(
-            dashboardMessage,
-            "Could not save match: " + error.message
-        );
+        showMessage(dashboardMessage, error.message);
+
     } finally {
         button.disabled = false;
-        button.textContent = "Save Match Result";
     }
 });
 
-// LEAGUE STANDINGS
+// ==========================================
+// LOAD INDEPENDENT LEAGUE STANDINGS
+// ==========================================
 
 async function loadStandings() {
-    const { data, error } = await db
-        .from("league_standings")
-        .select("*");
+    const container =
+        document.getElementById("standingsGroups");
 
-    if (error) throw error;
+    container.innerHTML =
+        '<p class="empty-message">Loading standings...</p>';
 
-    const table = document.getElementById("standingsTable");
+    const [
+        { data: standings, error: standingsError },
+        { data: assignments, error: assignmentsError },
+        { data: tournaments, error: tournamentsError }
+    ] = await Promise.all([
+        db.from("league_standings").select("*"),
+        db.from("tournament_players")
+            .select("tournament_id, player_id"),
+        db.from("tournaments").select("id, name")
+    ]);
 
-    if (!data || data.length === 0) {
-        table.innerHTML =
-            '<tr><td colspan="6">No standings available yet.</td></tr>';
+    if (standingsError) throw standingsError;
+    if (assignmentsError) throw assignmentsError;
+    if (tournamentsError) throw tournamentsError;
+
+    const assignedPairs = new Set(
+        (assignments || []).map(row =>
+            `${row.tournament_id}:${row.player_id}`
+        )
+    );
+
+    const tournamentNames = new Map(
+        (tournaments || []).map(tournament => [
+            tournament.id,
+            tournament.name
+        ])
+    );
+
+    const filteredStandings = (standings || []).filter(row =>
+        assignedPairs.has(
+            `${row.tournament_id}:${row.player_id}`
+        )
+    );
+
+    if (filteredStandings.length === 0) {
+        container.innerHTML =
+            '<p class="empty-message">No assigned players or standings available yet.</p>';
+
         return;
     }
 
-    table.innerHTML = data.map(player => `
-        <tr>
-            <td>${escapeHTML(player.player_name)}</td>
-            <td>${player.mp ?? 0}</td>
-            <td>${player.w ?? 0}</td>
-            <td>${player.d ?? 0}</td>
-            <td>${player.l ?? 0}</td>
-            <td>${player.pts ?? 0}</td>
-        </tr>
-    `).join("");
+    const grouped = new Map();
+
+    filteredStandings.forEach(row => {
+        if (!grouped.has(row.tournament_id)) {
+            grouped.set(row.tournament_id, []);
+        }
+
+        grouped.get(row.tournament_id).push(row);
+    });
+
+    container.innerHTML = [...grouped.entries()]
+        .map(([tournamentId, players]) => {
+
+            players.sort((a, b) =>
+                Number(b.pts || 0) - Number(a.pts || 0) ||
+                Number(b.gd || 0) - Number(a.gd || 0) ||
+                Number(b.gf || 0) - Number(a.gf || 0) ||
+                String(a.player_name).localeCompare(
+                    String(b.player_name)
+                )
+            );
+
+            const tournamentName =
+                tournamentNames.get(tournamentId) ||
+                players[0].tournament_name ||
+                "Tournament";
+
+            return `
+                <div class="standings-group">
+
+                    <h3>${escapeHTML(tournamentName)}</h3>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Player</th>
+                                    <th>MP</th>
+                                    <th>W</th>
+                                    <th>D</th>
+                                    <th>L</th>
+                                    <th>GF</th>
+                                    <th>GA</th>
+                                    <th>GD</th>
+                                    <th>Pts</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                ${players.map((player, index) => `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${escapeHTML(player.player_name)}</td>
+                                        <td>${Number(player.mp || 0)}</td>
+                                        <td>${Number(player.w || 0)}</td>
+                                        <td>${Number(player.d || 0)}</td>
+                                        <td>${Number(player.l || 0)}</td>
+                                        <td>${Number(player.gf || 0)}</td>
+                                        <td>${Number(player.ga || 0)}</td>
+                                        <td>${Number(player.gd || 0)}</td>
+                                        <td><strong>${Number(player.pts || 0)}</strong></td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
 }
 
-// START APPLICATION
+// ==========================================
+// AUTHENTICATION STATE CHANGES
+// ==========================================
 
-restoreSession();
+db.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+        showLogin();
+    }
+});
 
 </script>
 
-</div>
 </body>
-</html>
-
-
-function showLogin() {
-    loginSection.style.display = "block";
-    dashboard.style.display = "none";
-}
-
-function showDashboard() {
-    loginSection.style.display = "none";
-    dashboard.style.display = "block";
-}
-    
+            </html>
+                                                 
