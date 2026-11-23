@@ -244,216 +244,216 @@ th {
 
 <div id="dashboard">
 
-    <section>
-        <h2>Welcome, Admin</h2>
+<section>
+    <h2>Welcome, Admin</h2>
 
-        <button type="button" id="logoutButton">
-            Logout
+    <button type="button" id="logoutButton">
+        Logout
+    </button>
+
+    <div id="dashboardMessage" class="message"></div>
+</section>
+
+<section>
+    <h2>Register Player</h2>
+
+    <form id="playerForm">
+
+        <input
+            type="text"
+            id="playerName"
+            placeholder="Player name"
+            required
+        >
+
+        <button type="submit">
+            Register Player
         </button>
 
-        <div id="dashboardMessage" class="message"></div>
-    </section>
+    </form>
+</section>
 
-    <section>
-        <h2>Register Player</h2>
+<section>
+    <h2>Create Tournament</h2>
 
-        <form id="playerForm">
+    <form id="tournamentForm">
 
-            <input
-                type="text"
-                id="playerName"
-                placeholder="Player name"
-                required
-            >
+        <input
+            type="text"
+            id="tournamentName"
+            placeholder="Tournament name"
+            required
+        >
 
-            <button type="submit">
-                Register Player
-            </button>
+        <input
+            type="text"
+            id="tournamentSeason"
+            placeholder="Season (e.g. Season 1)"
+            required
+        >
 
-        </form>
-    </section>
+        <select id="tournamentStatus" required>
+            <option value="upcoming">Upcoming</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+        </select>
 
-    <section>
-        <h2>Create Tournament</h2>
+        <input
+            type="date"
+            id="tournamentDate"
+        >
 
-        <form id="tournamentForm">
+        <button type="submit">
+            Create Tournament
+        </button>
 
-            <input
-                type="text"
-                id="tournamentName"
-                placeholder="Tournament name"
-                required
-            >
+    </form>
+</section>
 
-            <input
-                type="text"
-                id="tournamentSeason"
-                placeholder="Season (e.g. Season 1)"
-                required
-            >
+<!-- TOURNAMENT PLAYER ASSIGNMENT -->
 
-            <select id="tournamentStatus" required>
-                <option value="upcoming">Upcoming</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-            </select>
+<section>
+    <h2>Tournament Player Assignment</h2>
 
-            <input
-                type="date"
-                id="tournamentDate"
-            >
+    <p class="assignment-help">
+        Select a tournament, then choose between 1 and 30
+        active players who will participate in that tournament.
+        Each tournament has its own independent group.
+        A player can participate in multiple tournaments.
+    </p>
 
-            <button type="submit">
-                Create Tournament
-            </button>
+    <select id="assignmentTournament">
+        <option value="">Select Tournament</option>
+    </select>
 
-        </form>
-    </section>
+    <div id="assignmentCount" class="assignment-count">
+        Selected players: 0 / 30
+    </div>
 
-    <!-- TOURNAMENT PLAYER ASSIGNMENT -->
-
-    <section>
-        <h2>Tournament Player Assignment</h2>
-
+    <div id="assignmentPlayers" class="assignment-list">
         <p class="assignment-help">
-            Select a tournament, then choose exactly seven active
-            players who will participate in that tournament.
-            Each tournament has its own independent group.
+            Select a tournament to load registered players.
         </p>
+    </div>
 
-        <select id="assignmentTournament">
+    <button type="button" id="saveAssignmentsButton">
+        Save Tournament Players
+    </button>
+
+    <div id="assignmentMessage" class="message"></div>
+</section>
+
+<section>
+    <h2>Enter Match Results</h2>
+
+    <form id="matchForm">
+
+        <select id="matchTournament" required>
             <option value="">Select Tournament</option>
         </select>
 
-        <div id="assignmentCount" class="assignment-count">
-            Selected players: 0 / 7
-        </div>
+        <select id="homePlayer" required>
+            <option value="">Select Home Player</option>
+        </select>
 
-        <div id="assignmentPlayers" class="assignment-list">
-            <p class="assignment-help">
-                Select a tournament to load registered players.
-            </p>
-        </div>
+        <select id="awayPlayer" required>
+            <option value="">Select Away Player</option>
+        </select>
 
-        <button type="button" id="saveAssignmentsButton">
-            Save Tournament Players
+        <input
+            type="number"
+            id="homeScore"
+            placeholder="Home score"
+            min="0"
+            required
+        >
+
+        <input
+            type="number"
+            id="awayScore"
+            placeholder="Away score"
+            min="0"
+            required
+        >
+
+        <button type="submit">
+            Save Match Result
         </button>
 
-        <div id="assignmentMessage" class="message"></div>
-    </section>
+    </form>
+</section>
 
-    <section>
-        <h2>Enter Match Results</h2>
+<section>
+    <h2>Registered Players</h2>
 
-        <form id="matchForm">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
 
-            <select id="matchTournament" required>
-                <option value="">Select Tournament</option>
-            </select>
+            <tbody id="playersTable">
+                <tr>
+                    <td colspan="3">Loading players...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 
-            <select id="homePlayer" required>
-                <option value="">Select Home Player</option>
-            </select>
+<section>
+    <h2>Tournaments</h2>
 
-            <select id="awayPlayer" required>
-                <option value="">Select Away Player</option>
-            </select>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tournament</th>
+                    <th>Season</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                </tr>
+            </thead>
 
-            <input
-                type="number"
-                id="homeScore"
-                placeholder="Home score"
-                min="0"
-                required
-            >
+            <tbody id="tournamentsTable">
+                <tr>
+                    <td colspan="4">Loading tournaments...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 
-            <input
-                type="number"
-                id="awayScore"
-                placeholder="Away score"
-                min="0"
-                required
-            >
+<section>
+    <h2>League Standings</h2>
 
-            <button type="submit">
-                Save Match Result
-            </button>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Played</th>
+                    <th>Won</th>
+                    <th>Drawn</th>
+                    <th>Lost</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
 
-        </form>
-    </section>
-
-    <section>
-        <h2>Registered Players</h2>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Player</th>
-                        <th>Status</th>
-                        <th>Registered</th>
-                    </tr>
-                </thead>
-
-                <tbody id="playersTable">
-                    <tr>
-                        <td colspan="3">Loading players...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section>
-        <h2>Tournaments</h2>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tournament</th>
-                        <th>Season</th>
-                        <th>Status</th>
-                        <th>Start Date</th>
-                    </tr>
-                </thead>
-
-                <tbody id="tournamentsTable">
-                    <tr>
-                        <td colspan="4">Loading tournaments...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section>
-        <h2>League Standings</h2>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Player</th>
-                        <th>Played</th>
-                        <th>Won</th>
-                        <th>Drawn</th>
-                        <th>Lost</th>
-                        <th>Points</th>
-                    </tr>
-                </thead>
-
-                <tbody id="standingsTable">
-                    <tr>
-                        <td colspan="6">Loading standings...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+            <tbody id="standingsTable">
+                <tr>
+                    <td colspan="6">Loading standings...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 
 </div>
-
 
 <script>
 const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
@@ -489,17 +489,7 @@ function hideMessage(element) {
     element.textContent = "";
     element.style.display = "none";
 }
-
-function showLogin() {
-    loginSection.style.display = "block";
-    dashboard.style.display = "none";
-}
-
-function showDashboard() {
-    loginSection.style.display = "none";
-    dashboard.style.display = "block";
-}
-
+    
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, character => ({
         "&": "&amp;",
@@ -768,7 +758,7 @@ function renderAssignmentPlayers() {
         container.innerHTML =
             '<p class="assignment-help">Select a tournament to load registered players.</p>';
 
-        count.textContent = "Selected players: 0 / 7";
+        count.textContent = "Selected players: 0 / 30";
         return;
     }
 
@@ -776,7 +766,7 @@ function renderAssignmentPlayers() {
         container.innerHTML =
             '<p class="assignment-help">No active registered players found.</p>';
 
-        count.textContent = "Selected players: 0 / 7";
+        count.textContent = "Selected players: 0 / 30";
         return;
     }
 
@@ -799,18 +789,18 @@ function renderAssignmentPlayers() {
     }).join("");
 
     count.textContent =
-        "Selected players: " + selectedTournamentPlayers.length + " / 7";
+        "Selected players: " + selectedTournamentPlayers.length + " / 30";
 
     container.querySelectorAll('input[type="checkbox"]')
     .forEach(checkbox => {
         checkbox.addEventListener("change", function() {
             if (this.checked) {
-                if (selectedTournamentPlayers.length >= 7) {
+                if (selectedTournamentPlayers.length >= 30) {
                     this.checked = false;
 
                     showMessage(
                         assignmentMessage,
-                        "You can select only seven players.",
+                        "You can select a maximum of 30 players.",
                         "error"
                     );
 
@@ -825,7 +815,7 @@ function renderAssignmentPlayers() {
             }
 
             count.textContent =
-                "Selected players: " + selectedTournamentPlayers.length + " / 7";
+                "Selected players: " + selectedTournamentPlayers.length + " / 30";
 
             hideMessage(assignmentMessage);
         });
@@ -885,10 +875,13 @@ document.getElementById("saveAssignmentsButton")
         return;
     }
 
-    if (selectedTournamentPlayers.length !== 7) {
+    if (
+        selectedTournamentPlayers.length < 1 ||
+        selectedTournamentPlayers.length > 30
+    ) {
         showMessage(
             assignmentMessage,
-            "Please select exactly seven players before saving."
+            "Select between 1 and 30 players before saving."
         );
         return;
     }
@@ -936,7 +929,8 @@ document.getElementById("saveAssignmentsButton")
 
         showMessage(
             assignmentMessage,
-            "Successfully saved seven players for this tournament!",
+            "Successfully saved " + selectedTournamentPlayers.length +
+            " players for this tournament!",
             "success"
         );
 
@@ -950,7 +944,7 @@ document.getElementById("saveAssignmentsButton")
         button.textContent = "Save Tournament Players";
     }
 });
-    
+
 // REGISTER PLAYER
 
 document.getElementById("playerForm")
@@ -990,7 +984,7 @@ document.getElementById("playerForm")
         button.disabled = false;
     }
 });
-
+    
 // CREATE TOURNAMENT
 
 document.getElementById("tournamentForm")
@@ -1003,6 +997,11 @@ document.getElementById("tournamentForm")
     const season = document.getElementById("tournamentSeason").value.trim();
     const status = document.getElementById("tournamentStatus").value;
     const startDate = document.getElementById("tournamentDate").value;
+
+    if (!name || !season) {
+        showMessage(dashboardMessage, "Enter tournament name and season.");
+        return;
+    }
 
     button.disabled = true;
 
@@ -1072,15 +1071,15 @@ async function loadMatchPlayers(tournamentId) {
         assignedIds.has(player.id)
     );
 
-    if (tournamentPlayers.length !== 7) {
+    if (tournamentPlayers.length < 1) {
         homeSelect.innerHTML =
-            '<option value="">Tournament needs seven assigned players</option>';
+            '<option value="">No assigned active players</option>';
 
         awaySelect.innerHTML =
-            '<option value="">Tournament needs seven assigned players</option>';
+            '<option value="">No assigned active players</option>';
 
         throw new Error(
-            "This tournament does not have exactly seven assigned active players. Check Tournament Player Assignment."
+            "This tournament has no assigned active players. Check Tournament Player Assignment."
         );
     }
 
@@ -1160,8 +1159,6 @@ document.getElementById("matchForm")
     button.textContent = "Saving match...";
 
     try {
-        // Verify both players are assigned to this tournament.
-
         const { data: assignments, error: assignmentError } = await db
             .from("tournament_players")
             .select("player_id")
@@ -1254,10 +1251,21 @@ async function loadStandings() {
 // START APPLICATION
 
 restoreSession();
-        
-                        </script>
-    
+
+</script>
 
 </div>
 </body>
 </html>
+
+
+function showLogin() {
+    loginSection.style.display = "block";
+    dashboard.style.display = "none";
+}
+
+function showDashboard() {
+    loginSection.style.display = "none";
+    dashboard.style.display = "block";
+}
+    
