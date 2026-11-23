@@ -91,6 +91,11 @@ button:disabled {
     color: #fca5a5;
 }
 
+.info {
+    background: #241438;
+    color: #d8b4fe;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -126,6 +131,57 @@ th {
     background: #39205c;
 }
 
+/* TOURNAMENT PLAYER ASSIGNMENT */
+
+.assignment-list {
+    margin-top: 12px;
+    border: 1px solid #39205c;
+    border-radius: 8px;
+    padding: 10px;
+    background: #0d0917;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.assignment-player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid #302044;
+}
+
+.assignment-player:last-child {
+    border-bottom: none;
+}
+
+.assignment-player input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #a855f7;
+    flex-shrink: 0;
+}
+
+.assignment-player label {
+    flex: 1;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+.assignment-count {
+    color: #c084fc;
+    font-weight: bold;
+    margin: 12px 0;
+}
+
+.assignment-help {
+    color: #c4b5fd;
+    line-height: 1.6;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
 @media (max-width: 600px) {
     body {
         padding: 10px;
@@ -133,6 +189,10 @@ th {
 
     section {
         padding: 15px;
+    }
+
+    .assignment-player {
+        padding: 14px 5px;
     }
 }
 </style>
@@ -250,6 +310,38 @@ th {
         </form>
     </section>
 
+    <!-- TOURNAMENT PLAYER ASSIGNMENT -->
+
+    <section>
+        <h2>Tournament Player Assignment</h2>
+
+        <p class="assignment-help">
+            Select a tournament, then choose exactly seven active
+            players who will participate in that tournament.
+            Each tournament has its own independent group.
+        </p>
+
+        <select id="assignmentTournament">
+            <option value="">Select Tournament</option>
+        </select>
+
+        <div id="assignmentCount" class="assignment-count">
+            Selected players: 0 / 7
+        </div>
+
+        <div id="assignmentPlayers" class="assignment-list">
+            <p class="assignment-help">
+                Select a tournament to load registered players.
+            </p>
+        </div>
+
+        <button type="button" id="saveAssignmentsButton">
+            Save Tournament Players
+        </button>
+
+        <div id="assignmentMessage" class="message"></div>
+    </section>
+
     <section>
         <h2>Enter Match Results</h2>
 
@@ -362,8 +454,8 @@ th {
 
 </div>
 
+
 <script>
-    
 const SUPABASE_URL = "https://zptxyfqqgxnxktquvkrk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
@@ -381,6 +473,11 @@ const loginForm = document.getElementById("loginForm");
 const loginButton = document.getElementById("loginButton");
 const message = document.getElementById("message");
 const dashboardMessage = document.getElementById("dashboardMessage");
+const assignmentMessage = document.getElementById("assignmentMessage");
+
+let activePlayers = [];
+let tournamentList = [];
+let selectedTournamentPlayers = [];
 
 function showMessage(element, text, type = "error") {
     element.textContent = text;
@@ -480,11 +577,7 @@ document.getElementById("forgotPasswordButton")
         );
 
     } catch (error) {
-        showMessage(
-            message,
-            "Recovery failed: " + error.message
-        );
-
+        showMessage(message, "Recovery failed: " + error.message);
     } finally {
         this.disabled = false;
         this.textContent = "Forgot Password?";
@@ -526,7 +619,6 @@ loginForm.addEventListener("submit", async function(event) {
         await db.auth.signOut();
         showLogin();
         showMessage(message, error.message);
-
     } finally {
         loginButton.disabled = false;
         loginButton.textContent = "Login";
@@ -589,7 +681,7 @@ async function loadDashboard() {
     }
 }
 
-// PLAYERS
+// LOAD PLAYERS
 
 async function loadPlayers() {
     const { data, error } = await db
@@ -604,33 +696,22 @@ async function loadPlayers() {
     if (!data || data.length === 0) {
         table.innerHTML =
             '<tr><td colspan="3">No players registered yet.</td></tr>';
-        return;
+    } else {
+        table.innerHTML = data.map(player => `
+            <tr>
+                <td>${escapeHTML(player.display_name)}</td>
+                <td>${player.is_active ? "Active" : "Inactive"}</td>
+                <td>${formatDate(player.created_at)}</td>
+            </tr>
+        `).join("");
     }
 
-    table.innerHTML = data.map(player => `
-        <tr>
-            <td>${escapeHTML(player.display_name)}</td>
-            <td>${player.is_active ? "Active" : "Inactive"}</td>
-            <td>${formatDate(player.created_at)}</td>
-        </tr>
-    `).join("");
+    activePlayers = (data || []).filter(player => player.is_active);
 
-    const options = data
-        .filter(player => player.is_active)
-        .map(player => `
-            <option value="${escapeHTML(player.id)}">
-                ${escapeHTML(player.display_name)}
-            </option>
-        `).join("");
-
-    document.getElementById("homePlayer").innerHTML =
-        '<option value="">Select Home Player</option>' + options;
-
-    document.getElementById("awayPlayer").innerHTML =
-        '<option value="">Select Away Player</option>' + options;
+    renderAssignmentPlayers();
 }
 
-// TOURNAMENTS
+// LOAD TOURNAMENTS
 
 async function loadTournaments() {
     const { data, error } = await db
@@ -640,13 +721,15 @@ async function loadTournaments() {
 
     if (error) throw error;
 
+    tournamentList = data || [];
+
     const table = document.getElementById("tournamentsTable");
 
-    if (!data || data.length === 0) {
+    if (tournamentList.length === 0) {
         table.innerHTML =
             '<tr><td colspan="4">No tournaments created yet.</td></tr>';
     } else {
-        table.innerHTML = data.map(tournament => `
+        table.innerHTML = tournamentList.map(tournament => `
             <tr>
                 <td>${escapeHTML(tournament.name)}</td>
                 <td>${escapeHTML(tournament.season || "")}</td>
@@ -656,7 +739,7 @@ async function loadTournaments() {
         `).join("");
     }
 
-    const options = (data || []).map(tournament => `
+    const options = tournamentList.map(tournament => `
         <option value="${escapeHTML(tournament.id)}">
             ${escapeHTML(tournament.name)}
         </option>
@@ -664,8 +747,210 @@ async function loadTournaments() {
 
     document.getElementById("matchTournament").innerHTML =
         '<option value="">Select Tournament</option>' + options;
+
+    document.getElementById("assignmentTournament").innerHTML =
+        '<option value="">Select Tournament</option>' + options;
+
+    selectedTournamentPlayers = [];
+    renderAssignmentPlayers();
 }
 
+// ASSIGNMENT PLAYER DISPLAY
+
+function renderAssignmentPlayers() {
+    const container = document.getElementById("assignmentPlayers");
+    const count = document.getElementById("assignmentCount");
+
+    const tournamentId =
+        document.getElementById("assignmentTournament").value;
+
+    if (!tournamentId) {
+        container.innerHTML =
+            '<p class="assignment-help">Select a tournament to load registered players.</p>';
+
+        count.textContent = "Selected players: 0 / 7";
+        return;
+    }
+
+    if (activePlayers.length === 0) {
+        container.innerHTML =
+            '<p class="assignment-help">No active registered players found.</p>';
+
+        count.textContent = "Selected players: 0 / 7";
+        return;
+    }
+
+    container.innerHTML = activePlayers.map(player => {
+        const checked = selectedTournamentPlayers.includes(player.id);
+
+        return `
+            <div class="assignment-player">
+                <input
+                    type="checkbox"
+                    id="assign_${escapeHTML(player.id)}"
+                    value="${escapeHTML(player.id)}"
+                    ${checked ? "checked" : ""}
+                >
+                <label for="assign_${escapeHTML(player.id)}">
+                    ${escapeHTML(player.display_name)}
+                </label>
+            </div>
+        `;
+    }).join("");
+
+    count.textContent =
+        "Selected players: " + selectedTournamentPlayers.length + " / 7";
+
+    container.querySelectorAll('input[type="checkbox"]')
+    .forEach(checkbox => {
+        checkbox.addEventListener("change", function() {
+            if (this.checked) {
+                if (selectedTournamentPlayers.length >= 7) {
+                    this.checked = false;
+
+                    showMessage(
+                        assignmentMessage,
+                        "You can select only seven players.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+                selectedTournamentPlayers.push(this.value);
+
+            } else {
+                selectedTournamentPlayers =
+                    selectedTournamentPlayers.filter(id => id !== this.value);
+            }
+
+            count.textContent =
+                "Selected players: " + selectedTournamentPlayers.length + " / 7";
+
+            hideMessage(assignmentMessage);
+        });
+    });
+}
+
+// LOAD EXISTING ASSIGNMENTS
+
+async function loadTournamentAssignments(tournamentId) {
+    selectedTournamentPlayers = [];
+
+    if (!tournamentId) {
+        renderAssignmentPlayers();
+        return;
+    }
+
+    const { data, error } = await db
+        .from("tournament_players")
+        .select("player_id")
+        .eq("tournament_id", tournamentId);
+
+    if (error) throw error;
+
+    selectedTournamentPlayers =
+        (data || []).map(row => row.player_id);
+
+    renderAssignmentPlayers();
+}
+
+// SELECT TOURNAMENT FOR ASSIGNMENT
+
+document.getElementById("assignmentTournament")
+.addEventListener("change", async function() {
+    hideMessage(assignmentMessage);
+
+    try {
+        await loadTournamentAssignments(this.value);
+    } catch (error) {
+        showMessage(
+            assignmentMessage,
+            "Could not load assignments: " + error.message
+        );
+    }
+});
+
+// SAVE TOURNAMENT ASSIGNMENTS
+
+document.getElementById("saveAssignmentsButton")
+.addEventListener("click", async function() {
+    const button = this;
+
+    const tournamentId =
+        document.getElementById("assignmentTournament").value;
+
+    if (!tournamentId) {
+        showMessage(assignmentMessage, "Select a tournament first.");
+        return;
+    }
+
+    if (selectedTournamentPlayers.length !== 7) {
+        showMessage(
+            assignmentMessage,
+            "Please select exactly seven players before saving."
+        );
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Saving assignments...";
+
+    try {
+        const { data: existing, error: existingError } = await db
+            .from("tournament_players")
+            .select("player_id")
+            .eq("tournament_id", tournamentId);
+
+        if (existingError) throw existingError;
+
+        const existingIds = (existing || []).map(row => row.player_id);
+
+        const toAdd = selectedTournamentPlayers
+            .filter(id => !existingIds.includes(id))
+            .map(id => ({
+                tournament_id: tournamentId,
+                player_id: id
+            }));
+
+        const toRemove = existingIds
+            .filter(id => !selectedTournamentPlayers.includes(id));
+
+        if (toAdd.length > 0) {
+            const { error } = await db
+                .from("tournament_players")
+                .insert(toAdd);
+
+            if (error) throw error;
+        }
+
+        if (toRemove.length > 0) {
+            const { error } = await db
+                .from("tournament_players")
+                .delete()
+                .eq("tournament_id", tournamentId)
+                .in("player_id", toRemove);
+
+            if (error) throw error;
+        }
+
+        showMessage(
+            assignmentMessage,
+            "Successfully saved seven players for this tournament!",
+            "success"
+        );
+
+    } catch (error) {
+        showMessage(
+            assignmentMessage,
+            "Assignment failed: " + error.message
+        );
+    } finally {
+        button.disabled = false;
+        button.textContent = "Save Tournament Players";
+    }
+});
+    
 // REGISTER PLAYER
 
 document.getElementById("playerForm")
@@ -750,6 +1035,81 @@ document.getElementById("tournamentForm")
     }
 });
 
+// LOAD PLAYERS FOR SELECTED MATCH TOURNAMENT
+
+async function loadMatchPlayers(tournamentId) {
+    const homeSelect = document.getElementById("homePlayer");
+    const awaySelect = document.getElementById("awayPlayer");
+
+    homeSelect.innerHTML =
+        '<option value="">Loading assigned players...</option>';
+
+    awaySelect.innerHTML =
+        '<option value="">Loading assigned players...</option>';
+
+    if (!tournamentId) {
+        homeSelect.innerHTML =
+            '<option value="">Select Home Player</option>';
+
+        awaySelect.innerHTML =
+            '<option value="">Select Away Player</option>';
+
+        return;
+    }
+
+    const { data, error } = await db
+        .from("tournament_players")
+        .select("player_id")
+        .eq("tournament_id", tournamentId);
+
+    if (error) throw error;
+
+    const assignedIds = new Set(
+        (data || []).map(row => row.player_id)
+    );
+
+    const tournamentPlayers = activePlayers.filter(player =>
+        assignedIds.has(player.id)
+    );
+
+    if (tournamentPlayers.length !== 7) {
+        homeSelect.innerHTML =
+            '<option value="">Tournament needs seven assigned players</option>';
+
+        awaySelect.innerHTML =
+            '<option value="">Tournament needs seven assigned players</option>';
+
+        throw new Error(
+            "This tournament does not have exactly seven assigned active players. Check Tournament Player Assignment."
+        );
+    }
+
+    const options = tournamentPlayers.map(player => `
+        <option value="${escapeHTML(player.id)}">
+            ${escapeHTML(player.display_name)}
+        </option>
+    `).join("");
+
+    homeSelect.innerHTML =
+        '<option value="">Select Home Player</option>' + options;
+
+    awaySelect.innerHTML =
+        '<option value="">Select Away Player</option>' + options;
+}
+
+// MATCH TOURNAMENT SELECTION
+
+document.getElementById("matchTournament")
+.addEventListener("change", async function() {
+    hideMessage(dashboardMessage);
+
+    try {
+        await loadMatchPlayers(this.value);
+    } catch (error) {
+        showMessage(dashboardMessage, error.message);
+    }
+});
+
 // SAVE MATCH RESULTS
 
 document.getElementById("matchForm")
@@ -797,8 +1157,31 @@ document.getElementById("matchForm")
     }
 
     button.disabled = true;
+    button.textContent = "Saving match...";
 
     try {
+        // Verify both players are assigned to this tournament.
+
+        const { data: assignments, error: assignmentError } = await db
+            .from("tournament_players")
+            .select("player_id")
+            .eq("tournament_id", tournament_id);
+
+        if (assignmentError) throw assignmentError;
+
+        const assignedIds = new Set(
+            (assignments || []).map(row => row.player_id)
+        );
+
+        if (
+            !assignedIds.has(home_player_id) ||
+            !assignedIds.has(away_player_id)
+        ) {
+            throw new Error(
+                "Both players must belong to the selected tournament."
+            );
+        }
+
         const { error } = await db
             .from("matches")
             .insert({
@@ -814,6 +1197,12 @@ document.getElementById("matchForm")
 
         this.reset();
 
+        document.getElementById("homePlayer").innerHTML =
+            '<option value="">Select Home Player</option>';
+
+        document.getElementById("awayPlayer").innerHTML =
+            '<option value="">Select Away Player</option>';
+
         showMessage(
             dashboardMessage,
             "Match result saved successfully!",
@@ -823,9 +1212,13 @@ document.getElementById("matchForm")
         await loadStandings();
 
     } catch (error) {
-        showMessage(dashboardMessage, error.message);
+        showMessage(
+            dashboardMessage,
+            "Could not save match: " + error.message
+        );
     } finally {
         button.disabled = false;
+        button.textContent = "Save Match Result";
     }
 });
 
@@ -848,12 +1241,12 @@ async function loadStandings() {
 
     table.innerHTML = data.map(player => `
         <tr>
-            <td>${escapeHTML(player.display_name)}</td>
-            <td>${player.played ?? 0}</td>
-            <td>${player.won ?? 0}</td>
-            <td>${player.drawn ?? 0}</td>
-            <td>${player.lost ?? 0}</td>
-            <td>${player.points ?? 0}</td>
+            <td>${escapeHTML(player.player_name)}</td>
+            <td>${player.mp ?? 0}</td>
+            <td>${player.w ?? 0}</td>
+            <td>${player.d ?? 0}</td>
+            <td>${player.l ?? 0}</td>
+            <td>${player.pts ?? 0}</td>
         </tr>
     `).join("");
 }
@@ -861,7 +1254,9 @@ async function loadStandings() {
 // START APPLICATION
 
 restoreSession();
-</script>
+        
+                        </script>
+    
 
 </div>
 </body>
