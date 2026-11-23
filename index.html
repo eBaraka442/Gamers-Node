@@ -549,55 +549,90 @@ table.innerHTML = data.map(tournament => `
 
 async function loadPublicStandings() {
 
-const table = document.getElementById("publicStandings");    
+    const table = document.getElementById("publicStandings");
 
-const { data, error } = await publicDB    
-    .from("league_standings")    
-    .select("*");    
+    const { data, error } = await publicDB
+        .from("league_standings")
+        .select("*");
 
-if (error) {    
+    if (error) {
+        console.error("Standings error:", error);
 
-    console.error("Standings error:", error);    
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="public-empty">
+                    Unable to load standings.
+                </td>
+            </tr>
+        `;
+        return;
+    }
 
-    table.innerHTML = `    
-        <tr>    
-            <td colspan="6" class="public-empty">    
-                Unable to load standings.    
-            </td>    
-        </tr>    
-    `;    
+    if (!data || data.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="public-empty">
+                    No standings available yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
 
-    return;    
-}    
+    const groups = {};
 
-if (!data || data.length === 0) {    
+    data.forEach(player => {
+        const tournament = player.tournament_name || "Unassigned Tournament";
 
-    table.innerHTML = `    
-        <tr>    
-            <td colspan="6" class="public-empty">    
-                No standings available yet.    
-            </td>    
-        </tr>    
-    `;    
+        if (!groups[tournament]) {
+            groups[tournament] = [];
+        }
 
-    return;    
-}    
+        groups[tournament].push(player);
+    });
 
-table.innerHTML = data.map(player => `    
-    <tr>    
-        <td>    
-            ${escapePlayerName(player.player_name)}    
-            <small style="display:block;color:#bba5ff;">    
-                ${escapePlayerName(player.tournament_name)}    
-            </small>    
-        </td>    
-        <td>${player.mp ?? 0}</td>    
-        <td>${player.w ?? 0}</td>    
-        <td>${player.d ?? 0}</td>    
-        <td>${player.l ?? 0}</td>    
-        <td>${player.pts ?? 0}</td>    
-    </tr>    
-`).join("");
+    Object.values(groups).forEach(players => {
+        players.sort((a, b) => {
+            const points = (Number(b.pts) || 0) - (Number(a.pts) || 0);
+
+            if (points !== 0) return points;
+
+            return (Number(b.w) || 0) - (Number(a.w) || 0);
+        });
+    });
+
+    table.innerHTML = Object.entries(groups).map(([tournament, players]) => {
+
+        const heading = `
+            <tr>
+                <td colspan="6" style="
+                    background:#1b1030;
+                    color:#d8b4fe;
+                    font-size:18px;
+                    font-weight:bold;
+                    padding:15px;
+                    text-align:left;
+                    border-top:2px solid #8b5cf6;
+                ">
+                    🏆 ${escapePlayerName(tournament)}
+                </td>
+            </tr>
+        `;
+
+        const rows = players.map(player => `
+            <tr>
+                <td>${escapePlayerName(player.player_name)}</td>
+                <td>${player.mp ?? 0}</td>
+                <td>${player.w ?? 0}</td>
+                <td>${player.d ?? 0}</td>
+                <td>${player.l ?? 0}</td>
+                <td>${player.pts ?? 0}</td>
+            </tr>
+        `).join("");
+
+        return heading + rows;
+
+    }).join("");
 
 }
 
@@ -605,14 +640,16 @@ table.innerHTML = data.map(player => `
 
 async function loadPublicData() {
 
-await Promise.all([    
-    loadPublicPlayers(),    
-    loadPublicTournaments(),    
-    loadPublicStandings()    
-]);
+    await Promise.all([
+        loadPublicPlayers(),
+        loadPublicTournaments(),
+        loadPublicStandings()
+    ]);
 
 }
 
 loadPublicData();
-</script>  </body>
-    </html>
+
+</script>
+</body>
+</html>
