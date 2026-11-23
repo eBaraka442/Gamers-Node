@@ -678,52 +678,6 @@ async function loadPublicTournaments() {
 /* LOAD LEAGUE STANDINGS */
 
 async function loadPublicStandings() {
-  const table = document.getElementById("publicStandings");
-
-  const { data, error } = await publicDB
-    .from("league_standings")
-    .select("*");
-
-  if (error) {
-    console.error("Standings error:", error);
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="6" class="public-empty">
-          Unable to load standings.
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    table.innerHTML = `
-      <tr>
-        <td colspan="6" class="public-empty">
-          No standings available yet.
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  table.innerHTML = data.map(player => `
-    <tr>
-      <td>
-        ${escapePlayerName(player.player_name)}
-        <small style="display:block;color:#bba5ff;">
-          ${escapePlayerName(player.tournament_name)}
-        </small>
-      </td>
-      <td>${player.mp ?? 0}</td>
-      <td>${player.w ?? 0}</td>
-      <td>${player.d ?? 0}</td>
-      <td>${player.l ?? 0}</td>
-      <td>${player.pts ?? 0}</td>
-    </tr>
-  `).join("");
-}
 
     const table = document.getElementById("publicStandings");
 
@@ -733,6 +687,8 @@ async function loadPublicStandings() {
 
     if (error) {
 
+        console.error("Standings error:", error);
+
         table.innerHTML = `
             <tr>
                 <td colspan="6" class="public-empty">
@@ -741,7 +697,6 @@ async function loadPublicStandings() {
             </tr>
         `;
 
-        console.error("Standings error:", error);
         return;
     }
 
@@ -750,7 +705,7 @@ async function loadPublicStandings() {
         table.innerHTML = `
             <tr>
                 <td colspan="6" class="public-empty">
-                    No league standings available yet.
+                    No standings available yet.
                 </td>
             </tr>
         `;
@@ -760,12 +715,17 @@ async function loadPublicStandings() {
 
     table.innerHTML = data.map(player => `
         <tr>
-            <td>${escapePlayerName(player.display_name || "Unknown")}</td>
-            <td>${player.played ?? 0}</td>
-            <td>${player.won ?? 0}</td>
-            <td>${player.drawn ?? 0}</td>
-            <td>${player.lost ?? 0}</td>
-            <td>${player.points ?? 0}</td>
+            <td>
+                ${escapePlayerName(player.player_name)}
+                <small style="display:block;color:#bba5ff;">
+                    ${escapePlayerName(player.tournament_name)}
+                </small>
+            </td>
+            <td>${player.mp ?? 0}</td>
+            <td>${player.w ?? 0}</td>
+            <td>${player.d ?? 0}</td>
+            <td>${player.l ?? 0}</td>
+            <td>${player.pts ?? 0}</td>
         </tr>
     `).join("");
 }
@@ -786,4 +746,5 @@ loadPublicData();
 </script>
 
 </body>
-</html>
+    </html>
+    
