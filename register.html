@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,19 +88,16 @@
     <p>Connect. Compete. Grow.</p>
     <p>Tell us a little about your gaming interests.</p>
 
-   <form action="https://formsubmit.co/ebaraka442@gmail.com"
+    <form action="https://formsubmit.co/ebaraka442@gmail.com"
       method="POST">
 
-  <input type="hidden" name="_next"
-         value="https://ebaraka442.github.io/Gamers-Node/thank-you.html">
+      <input type="hidden" name="_next"
+        value="https://ebaraka442.github.io/Gamers-Node/thank-you.html">
 
-  <input type="hidden" name="_template"
-         value="table">
+      <input type="hidden" name="_template" value="table">
 
-  <input type="text" name="_honey"
-         style="display:none">
+      <input type="text" name="_honey" style="display:none">
 
-  <!-- Keep your existing registration fields below -->
       <label for="gamerName">Gamer name</label>
       <input
         id="gamerName"
@@ -110,12 +108,22 @@
         placeholder="Your gaming name"
       >
 
-      <label for="email">email(optional)</label>
+      <label for="email">Email (optional)</label>
       <input
         id="email"
         name="email"
         type="email"
-        placeholder="you@example.gmail.com"
+        placeholder="you@example.com"
+      >
+
+      <!-- NEW PHONE NUMBER FIELD -->
+      <label for="phone">Phone Number</label>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        placeholder="e.g. +254712345678"
+        autocomplete="tel"
       >
 
       <label for="game">Favourite game</label>
@@ -157,6 +165,5 @@
 
     <a class="back" href="index.html">← Back to Gaming Hub</a>
   </main>
-
 </body>
 </html>
