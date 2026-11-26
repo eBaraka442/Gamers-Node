@@ -516,6 +516,8 @@ table.innerHTML = data.map(tournament =>       <tr>       <td>${escapePlayerName
 
 /* LOAD LEAGUE STANDINGS — ASSIGNMENT FILTERED */
 
+/* LOAD LEAGUE STANDINGS — ALLOCATION FILTER */
+
 async function loadPublicStandings() {
 
     const table = document.getElementById("publicStandings");
@@ -530,31 +532,20 @@ async function loadPublicStandings() {
 
     const [
         { data: standings, error: standingsError },
-        { data: assignments, error: assignmentsError },
-        { data: tournaments, error: tournamentsError }
+        { data: assignments, error: assignmentsError }
     ] = await Promise.all([
 
-        publicDB
-            .from("league_standings")
-            .select("*"),
+        publicDB.from("league_standings").select("*"),
 
-        publicDB
-            .from("tournament_players")
-            .select("tournament_id, player_id"),
-
-        publicDB
-            .from("tournaments")
-            .select("id, name")
+        publicDB.from("tournament_players")
+            .select("tournament_id, player_id")
 
     ]);
 
-    if (standingsError || assignmentsError || tournamentsError) {
+    if (standingsError || assignmentsError) {
 
-        console.error("Public standings errors:", {
-            standingsError,
-            assignmentsError,
-            tournamentsError
-        });
+        console.error("Standings error:", standingsError);
+        console.error("Assignments error:", assignmentsError);
 
         table.innerHTML = `
             <tr>
@@ -569,22 +560,13 @@ async function loadPublicStandings() {
 
     const assignedPairs = new Set(
         (assignments || []).map(row =>
-            String(row.tournament_id) + ":" +
-            String(row.player_id)
+            row.tournament_id + ":" + row.player_id
         )
-    );
-
-    const tournamentNames = new Map(
-        (tournaments || []).map(tournament => [
-            String(tournament.id),
-            tournament.name
-        ])
     );
 
     const filteredStandings = (standings || []).filter(player =>
         assignedPairs.has(
-            String(player.tournament_id) + ":" +
-            String(player.player_id)
+            player.tournament_id + ":" + player.player_id
         )
     );
 
@@ -593,7 +575,7 @@ async function loadPublicStandings() {
         table.innerHTML = `
             <tr>
                 <td colspan="6" class="public-empty">
-                    No assigned players or standings available yet.
+                    No assigned standings available yet.
                 </td>
             </tr>
         `;
@@ -605,86 +587,65 @@ async function loadPublicStandings() {
 
     filteredStandings.forEach(player => {
 
-        const tournamentId = String(player.tournament_id);
+        const tournament =
+            player.tournament_name || "Tournament";
 
-        const tournamentName =
-            tournamentNames.get(tournamentId) ||
-            player.tournament_name ||
-            "Tournament";
-
-        if (!groups[tournamentId]) {
-            groups[tournamentId] = {
-                name: tournamentName,
-                players: []
-            };
+        if (!groups[tournament]) {
+            groups[tournament] = [];
         }
 
-        groups[tournamentId].players.push(player);
+        groups[tournament].push(player);
 
     });
 
-    Object.values(groups).forEach(group => {
+    Object.values(groups).forEach(players => {
 
-        group.players.sort((a, b) => {
-
-            const points =
-                Number(b.pts || 0) - Number(a.pts || 0);
-
-            if (points !== 0) return points;
-
-            return Number(b.w || 0) - Number(a.w || 0);
-
-        });
+        players.sort((a, b) =>
+            (Number(b.pts) || 0) - (Number(a.pts) || 0) ||
+            (Number(b.w) || 0) - (Number(a.w) || 0)
+        );
 
     });
 
-    table.innerHTML = Object.values(groups).map(group => {
+    table.innerHTML = Object.entries(groups).map(
+        ([tournament, players]) => {
 
-        const heading = `
-            <tr>
-                <td colspan="6" style="
-                    background:#1b1030;
-                    color:#d8b4fe;
-                    font-size:18px;
-                    font-weight:bold;
-                    padding:15px;
-                    text-align:left;
-                    border-top:2px solid #8b5cf6;
-                ">
-                    🏆 ${escapePlayerName(group.name)}
-                </td>
-            </tr>
-        `;
+            const heading = `
+                <tr>
+                    <td colspan="6" style="
+                        background:#1b1030;
+                        color:#d8b4fe;
+                        font-size:18px;
+                        font-weight:bold;
+                        padding:15px;
+                        text-align:left;
+                        border-top:2px solid #8b5cf6;
+                    ">
+                        🏆 ${escapePlayerName(tournament)}
+                    </td>
+                </tr>
+            `;
 
-        const rows = group.players.map(player => `
-            <tr>
-                <td>${escapePlayerName(player.player_name)}</td>
-                <td>${Number(player.mp || 0)}</td>
-                <td>${Number(player.w || 0)}</td>
-                <td>${Number(player.d || 0)}</td>
-                <td>${Number(player.l || 0)}</td>
-                <td>${Number(player.pts || 0)}</td>
-            </tr>
-        `).join("");
+            const rows = players.map(player => `
+                <tr>
+                    <td>${escapePlayerName(player.player_name)}</td>
+                    <td>${player.mp ?? 0}</td>
+                    <td>${player.w ?? 0}</td>
+                    <td>${player.d ?? 0}</td>
+                    <td>${player.l ?? 0}</td>
+                    <td>${player.pts ?? 0}</td>
+                </tr>
+            `).join("");
 
-        return heading + rows;
+            return heading + rows;
 
-    }).join("");
-
-}
-
-
-/* LOAD ALL PUBLIC DATA */
-
-async function loadPublicData() {
-
-await Promise.all([  
-    loadPublicPlayers(),  
-    loadPublicTournaments(),  
-    loadPublicStandings()  
-]);
+        }
+    ).join("");
 
 }
+
+     
+        
 
 loadPublicData();
 
