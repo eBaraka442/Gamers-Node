@@ -463,7 +463,13 @@ return;
 
 }
 
-container.innerHTML = data.map(player =>       <article class="card">       <div class="emoji">🎮</div>       <h3>${escapePlayerName(player.display_name)}</h3>       <p>Gamers-Node Member</p>       </article>      ).join("");
+container.innerHTML = data.map(player => `
+    <article class="card">
+        <div class="emoji">🎮</div>
+        <h3>${escapePlayerName(player.display_name)}</h3>
+        <p>Gamers-Node Member</p>
+    </article>
+`).join("");
 
 }
 
