@@ -235,53 +235,24 @@ footer {
     color: #aaa3bd !important;
 }
 
-/* ANNOUNCEMENTS */
+/* ERROR DETAILS */
 
-.announcement-section {
-    padding: 45px 7%;
-    background: #0d0916;
-    text-align: center;
-}
-
-.announcement-section h2 {
-    color: #c084fc;
-    font-size: 28px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 15px #9333ea;
-}
-
-.announcement-card {
-    max-width: 900px;
-    margin: auto;
-    padding: 25px;
+.public-error {
+    color: #fecaca !important;
+    background: #35151f;
+    border: 1px solid #9f354c;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px;
     text-align: left;
-    background: #151020;
-    border: 1px solid #8545bb;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #9333ea33;
+    overflow-wrap: anywhere;
+    font-size: 13px;
 }
 
-.announcement-card h3 {
-    color: #d8b4fe;
-    margin-bottom: 12px;
-}
-
-.announcement-card p {
-    color: #c9c4d5;
-    margin-bottom: 15px;
-}
-
-.announcement-label {
-    display: inline-block;
-    padding: 5px 12px;
-    margin-bottom: 15px;
-    background: #351653;
-    border: 1px solid #8545bb;
-    border-radius: 20px;
-    color: #e9d5ff;
-    font-size: 12px;
+.public-error-title {
+    color: #fda4af;
     font-weight: bold;
-    letter-spacing: 1px;
+    margin-bottom: 5px;
 }
 
 /* MOBILE */
@@ -293,6 +264,7 @@ footer {
 
     nav a {
         margin: 0 8px;
+        font-size: 12px;
     }
 
     .hero {
@@ -427,11 +399,9 @@ footer {
     </p>
 
     <div class="cards" id="publicPlayers">
-
         <article class="card">
             <p>Loading registered players...</p>
         </article>
-
     </div>
 </section>
 
@@ -446,9 +416,7 @@ footer {
     </p>
 
     <div class="public-table-wrapper">
-
         <table class="public-table">
-
             <thead>
                 <tr>
                     <th>Tournament</th>
@@ -459,17 +427,13 @@ footer {
             </thead>
 
             <tbody id="publicTournaments">
-
                 <tr>
                     <td colspan="4" class="public-empty">
                         Loading tournaments...
                     </td>
                 </tr>
-
             </tbody>
-
         </table>
-
     </div>
 </section>
 
@@ -484,9 +448,7 @@ footer {
     </p>
 
     <div class="public-table-wrapper">
-
         <table class="public-table">
-
             <thead>
                 <tr>
                     <th>Player</th>
@@ -499,17 +461,13 @@ footer {
             </thead>
 
             <tbody id="publicStandings">
-
                 <tr>
                     <td colspan="6" class="public-empty">
                         Loading standings...
                     </td>
                 </tr>
-
             </tbody>
-
         </table>
-
     </div>
 </section>
 
@@ -539,28 +497,62 @@ footer {
 
 <script src="bots.js"></script>
 
-<!-- SUPABASE PUBLIC DATA -->
-
+<!-- SUPABASE PUBLIC DATA SCRIPT STARTS IN PART 2 -->
+    
 <script>
+
+"use strict";
+
+/* ==========================================
+   SUPABASE CONNECTION
+========================================== */
 
 const PUBLIC_SUPABASE_URL =
     "https://zptxyfqqgxnxktquvkrk.supabase.co";
 
 const PUBLIC_SUPABASE_KEY =
-    "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk_8_mVbP";
+    "sb_publishable_HdzQx4LPbKeB4ZU671Xw8A_bk8_mVbP";
 
-const publicDB = window.supabase.createClient(
-    PUBLIC_SUPABASE_URL,
-    PUBLIC_SUPABASE_KEY
-);
+let publicDB = null;
+
+try {
+
+    if (
+        !window.supabase ||
+        typeof window.supabase.createClient !== "function"
+    ) {
+        throw new Error(
+            "Supabase library did not load. Please check your internet connection."
+        );
+    }
+
+    publicDB = window.supabase.createClient(
+        PUBLIC_SUPABASE_URL,
+        PUBLIC_SUPABASE_KEY
+    );
+
+} catch (error) {
+
+    console.error("Supabase initialization error:", error);
+
+}
+
+/* ==========================================
+   HELPER FUNCTIONS
+========================================== */
 
 function escapePlayerName(value) {
+
     const div = document.createElement("div");
+
     div.textContent = value ?? "";
+
     return div.innerHTML;
+
 }
 
 function publicFormatDate(value) {
+
     if (!value) return "—";
 
     const date = new Date(value);
@@ -568,123 +560,246 @@ function publicFormatDate(value) {
     return Number.isNaN(date.getTime())
         ? "—"
         : date.toLocaleDateString();
+
 }
 
-/* LOAD REGISTERED PLAYERS */
+function getPublicErrorMessage(error) {
 
-async function loadPublicPlayers() {
-
-    const container = document.getElementById("publicPlayers");
-
-    const { data, error } = await publicDB
-        .from("players")
-        .select("display_name, is_active, created_at")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
-
-    if (error) {
-
-        container.innerHTML = `
-            <article class="card">
-                <p>Unable to load players right now.</p>
-            </article>
-        `;
-
-        console.error("Players error:", error);
-        return;
+    if (!error) {
+        return "Unknown error.";
     }
 
-    if (!data || data.length === 0) {
-
-        container.innerHTML = `
-            <article class="card">
-                <p>No registered players yet.</p>
-            </article>
-        `;
-
-        return;
+    if (typeof error === "string") {
+        return error;
     }
 
-    container.innerHTML = data.map(player => `
+    const details = [
+        error.message,
+        error.details,
+        error.hint,
+        error.code ? "Error code: " + error.code : ""
+    ].filter(Boolean);
+
+    return details.length
+        ? details.join(" | ")
+        : "An unknown database error occurred.";
+
+}
+
+function showPlayersError(error) {
+
+    const container =
+        document.getElementById("publicPlayers");
+
+    container.innerHTML = `
         <article class="card">
-            <div class="emoji">🎮</div>
-            <h3>${escapePlayerName(player.display_name)}</h3>
-            <p>Gamers-Node Member</p>
+            <p class="public-error-title">
+                Unable to load registered players.
+            </p>
+
+            <p class="public-error">
+                ${escapePlayerName(getPublicErrorMessage(error))}
+            </p>
         </article>
-    `).join("");
+    `;
 
 }
 
-/* LOAD TOURNAMENTS */
-
-async function loadPublicTournaments() {
-
-    const table = document.getElementById("publicTournaments");
-
-    const { data, error } = await publicDB
-        .from("tournaments")
-        .select("name, season, status, start_date, created_at")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="4" class="public-empty">
-                    Unable to load tournaments.
-                </td>
-            </tr>
-        `;
-
-        console.error("Tournament error:", error);
-        return;
-    }
-
-    if (!data || data.length === 0) {
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="4" class="public-empty">
-                    No tournaments available yet.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    table.innerHTML = data.map(tournament => `
-        <tr>
-            <td>${escapePlayerName(tournament.name)}</td>
-            <td>${escapePlayerName(tournament.season || "—")}</td>
-            <td class="public-status">
-                ${escapePlayerName(tournament.status || "—")}
-            </td>
-            <td>${publicFormatDate(tournament.start_date)}</td>
-        </tr>
-    `).join("");
-
-}
-
-/* LOAD LEAGUE STANDINGS */
-
-async function loadPublicStandings() {
-
-    const table = document.getElementById("publicStandings");
+function showTableError(table, error, columns, sectionName) {
 
     table.innerHTML = `
         <tr>
-            <td colspan="6" class="public-empty">
-                Loading standings...
+            <td colspan="${columns}">
+                <div class="public-error">
+                    <div class="public-error-title">
+                        Unable to load ${escapePlayerName(sectionName)}.
+                    </div>
+
+                    ${escapePlayerName(getPublicErrorMessage(error))}
+                </div>
             </td>
         </tr>
     `;
 
+}
+
+/* ==========================================
+   CHECK SUPABASE INITIALIZATION
+========================================== */
+
+if (!publicDB) {
+
+    const connectionError = new Error(
+        "Supabase could not initialize. Check whether the Supabase JavaScript library loaded."
+    );
+
+    showPlayersError(connectionError);
+
+    showTableError(
+        document.getElementById("publicTournaments"),
+        connectionError,
+        4,
+        "tournaments"
+    );
+
+    showTableError(
+        document.getElementById("publicStandings"),
+        connectionError,
+        6,
+        "standings"
+    );
+
+}
+
+/* ==========================================
+   LOAD REGISTERED PLAYERS
+========================================== */
+
+async function loadPublicPlayers() {
+
+    const container =
+        document.getElementById("publicPlayers");
+
     try {
+
+        if (!publicDB) {
+            throw new Error("Supabase connection is unavailable.");
+        }
+
+        const { data, error } = await publicDB
+            .from("players")
+            .select("display_name, is_active, created_at")
+            .eq("is_active", true)
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data || data.length === 0) {
+
+            container.innerHTML = `
+                <article class="card">
+                    <p>No registered players yet.</p>
+                </article>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = data.map(player => `
+            <article class="card">
+                <div class="emoji">🎮</div>
+
+                <h3>
+                    ${escapePlayerName(player.display_name)}
+                </h3>
+
+                <p>Gamers-Node Member</p>
+            </article>
+        `).join("");
+
+    } catch (error) {
+
+        console.error("Players loading error:", error);
+
+        showPlayersError(error);
+
+    }
+
+}
+
+/* ==========================================
+   LOAD TOURNAMENTS
+========================================== */
+
+async function loadPublicTournaments() {
+
+    const table =
+        document.getElementById("publicTournaments");
+
+    try {
+
+        if (!publicDB) {
+            throw new Error("Supabase connection is unavailable.");
+        }
+
+        const { data, error } = await publicDB
+            .from("tournaments")
+            .select("name, season, status, start_date, created_at")
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data || data.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="4" class="public-empty">
+                        No tournaments available yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        table.innerHTML = data.map(tournament => `
+            <tr>
+                <td>
+                    ${escapePlayerName(tournament.name)}
+                </td>
+
+                <td>
+                    ${escapePlayerName(tournament.season || "—")}
+                </td>
+
+                <td class="public-status">
+                    ${escapePlayerName(tournament.status || "—")}
+                </td>
+
+                <td>
+                    ${publicFormatDate(tournament.start_date)}
+                </td>
+            </tr>
+        `).join("");
+
+    } catch (error) {
+
+        console.error("Tournament loading error:", error);
+
+        showTableError(
+            table,
+            error,
+            4,
+            "tournaments"
+        );
+
+    }
+
+}
+
+/* ==========================================
+   LOAD LEAGUE STANDINGS
+========================================== */
+
+async function loadPublicStandings() {
+
+    const table =
+        document.getElementById("publicStandings");
+
+    try {
+
+        if (!publicDB) {
+            throw new Error("Supabase connection is unavailable.");
+        }
 
         const { data, error } = await publicDB
             .from("league_standings")
-            .select("*");
+            .select("*")
+            .order("tournament_name", { ascending: true });
 
         if (error) {
             throw error;
@@ -703,94 +818,124 @@ async function loadPublicStandings() {
             return;
         }
 
+        /* GROUP PLAYERS BY TOURNAMENT ID */
+
         const groups = {};
 
         data.forEach(player => {
 
-            const tournament =
-                player.tournament_name || "Tournament";
+            const tournamentId =
+                player.tournament_id || player.tournament_name;
 
-            if (!groups[tournament]) {
-                groups[tournament] = [];
+            if (!groups[tournamentId]) {
+
+                groups[tournamentId] = {
+                    name: player.tournament_name || "Tournament",
+                    players: []
+                };
+
             }
 
-            groups[tournament].push(player);
+            groups[tournamentId].players.push(player);
 
         });
 
-        Object.values(groups).forEach(players => {
+        /* SORT PLAYERS WITHIN EACH TOURNAMENT */
 
-            players.sort((a, b) =>
-                (Number(b.pts) || 0) - (Number(a.pts) || 0) ||
-                (Number(b.w) || 0) - (Number(a.w) || 0)
-            );
+        Object.values(groups).forEach(group => {
+
+            group.players.sort((a, b) => {
+
+                return (
+                    (Number(b.pts) || 0) -
+                    (Number(a.pts) || 0)
+                ) || (
+                    (Number(b.w) || 0) -
+                    (Number(a.w) || 0)
+                );
+
+            });
 
         });
 
-        table.innerHTML = Object.entries(groups).map(
-            ([tournament, players]) => {
+        /* DISPLAY EACH TOURNAMENT SEPARATELY */
 
-                const heading = `
-                    <tr>
-                        <td colspan="6" style="
-                            background:#1b1030;
-                            color:#d8b4fe;
-                            font-size:18px;
-                            font-weight:bold;
-                            padding:15px;
-                            text-align:left;
-                            border-top:2px solid #8b5cf6;
-                        ">
-                            🏆 ${escapePlayerName(tournament)}
-                        </td>
-                    </tr>
-                `;
+        table.innerHTML = Object.values(groups).map(group => {
 
-                const rows = players.map(player => `
-                    <tr>
-                        <td>${escapePlayerName(player.player_name)}</td>
-                        <td>${player.mp ?? 0}</td>
-                        <td>${player.w ?? 0}</td>
-                        <td>${player.d ?? 0}</td>
-                        <td>${player.l ?? 0}</td>
-                        <td>${player.pts ?? 0}</td>
-                    </tr>
-                `).join("");
+            const heading = `
+                <tr>
+                    <td colspan="6" style="
+                        background:#1b1030;
+                        color:#d8b4fe;
+                        font-size:18px;
+                        font-weight:bold;
+                        padding:15px;
+                        text-align:left;
+                        border-top:2px solid #8b5cf6;
+                    ">
+                        🏆 ${escapePlayerName(group.name)}
+                    </td>
+                </tr>
+            `;
 
-                return heading + rows;
+            const rows = group.players.map(player => `
+                <tr>
+                    <td>
+                        ${escapePlayerName(player.player_name)}
+                    </td>
 
-            }
-        ).join("");
+                    <td>${Number(player.mp) || 0}</td>
+                    <td>${Number(player.w) || 0}</td>
+                    <td>${Number(player.d) || 0}</td>
+                    <td>${Number(player.l) || 0}</td>
+                    <td>${Number(player.pts) || 0}</td>
+                </tr>
+            `).join("");
+
+            return heading + rows;
+
+        }).join("");
 
     } catch (error) {
 
-        console.error("Standings error:", error);
+        console.error("Standings loading error:", error);
 
-        table.innerHTML = `
-            <tr>
-                <td colspan="6" class="public-empty">
-                    Unable to load standings.
-                </td>
-            </tr>
-        `;
+        showTableError(
+            table,
+            error,
+            6,
+            "standings"
+        );
 
     }
 
 }
 
-/* LOAD ALL PUBLIC DATA */
+/* ==========================================
+   LOAD ALL PUBLIC DATA
+========================================== */
 
 async function loadPublicData() {
 
+    if (!publicDB) {
+        return;
+    }
+
     await Promise.allSettled([
+
         loadPublicPlayers(),
+
         loadPublicTournaments(),
+
         loadPublicStandings()
+
     ]);
 
 }
 
-/* START */
+/* ==========================================
+   START WEBSITE DATA LOADING
+========================================== */
 
 loadPublicData();
 
